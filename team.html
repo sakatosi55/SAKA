@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不動産大家 AI チーム</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d0d1a;
+    color: #f0e6d3;
+    font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #d4a843;
+    letter-spacing: 0.15em;
+    margin-bottom: 50px;
+  }
+  .owner {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .owner-box {
+    display: inline-block;
+    border: 2px solid #d4a843;
+    border-radius: 12px;
+    padding: 12px 40px;
+    color: #d4a843;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+  .connector {
+    text-align: center;
+    color: #555;
+    font-size: 1.5rem;
+    margin: 10px 0;
+  }
+
+  /* 秘書 */
+  .secretary-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .secretary-card {
+    background: linear-gradient(135deg, #2a1f3d, #1a1428);
+    border: 2px solid #7c5cbf;
+    border-radius: 16px;
+    padding: 20px 30px;
+    text-align: center;
+  }
+  .secretary-card img {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #7c5cbf;
+  }
+  .secretary-name {
+    color: #c5b3e8;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 8px;
+  }
+  .secretary-desc {
+    color: #888;
+    font-size: 0.72rem;
+    margin-top: 4px;
+  }
+
+  /* チーム */
+  .teams {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .team { width: 340px; }
+  .team-header {
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+  .offense .team-header { background: #3d1a1a; color: #e05555; border: 1px solid #e05555; }
+  .defense .team-header { background: #1a1f3d; color: #5588e0; border: 1px solid #5588e0; }
+
+  .cards { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+  .offense .card { background: #1e1010; border: 1px solid #5a2020; }
+  .defense .card { background: #101018; border: 1px solid #20305a; }
+
+  .card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .offense .card img { border: 2px solid #e05555; }
+  .defense .card img { border: 2px solid #5588e0; }
+
+  .card-info { flex: 1; }
+  .card-name { font-size: 1rem; font-weight: bold; color: #f0e6d3; margin-bottom: 3px; }
+  .card-desc { font-size: 0.72rem; color: #777; line-height: 1.5; }
+  .offense .card-desc { color: #a06060; }
+  .defense .card-desc { color: #6070a0; }
+
+  .img-placeholder {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #2a2a2a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>不動産大家 AI チーム</h1>
+
+<div class="owner">
+  <div class="owner-box">👑 オーナー（あなた）</div>
+</div>
+<div class="connector">│</div>
+
+<!-- 秘書 -->
+<div class="secretary-wrap">
+  <div class="secretary-card">
+    <img src="images/nanao.webp" alt="菜々緒" style="object-position: 50% 5%; width: 100px; height: 100px;"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+    <div class="img-placeholder" style="display:none;width:100px;height:100px;font-size:2.5rem;">💼</div>
+    <div class="secretary-name">菜々緒</div>
+    <div class="secretary-desc">窓口・TODO・スケジュール・振り分け</div>
+  </div>
+</div>
+<div class="connector">│</div>
+
+<div class="teams">
+  <!-- オフェンス -->
+  <div class="team offense">
+    <div class="team-header">⚔️ オフェンス — 事業拡大</div>
+    <div class="cards">
+
+      <div class="card">
+        <img src="images/ryoma.png" alt="坂本龍馬"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="img-placeholder" style="display:none">🗺️</div>
+        <div class="card-info">
+          <div class="card-name">坂本龍馬</div>
+          <div class="card-desc">物件評価・指値判断・エリア分析・賃料相場</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="images/shibusawa.png" alt="渋沢栄一"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="img-placeholder" style="display:none">🏦</div>
+        <div class="card-info">
+          <div class="card-name">渋沢栄一</div>
+          <div class="card-desc">融資戦略・与信枠管理・銀行アタック資料</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="images/caocao.webp" alt="曹操"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="img-placeholder" style="display:none">⚔️</div>
+        <div class="card-info">
+          <div class="card-name">曹操</div>
+          <div class="card-desc">投資判断・出口戦略・ポートフォリオ最適化</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ディフェンス -->
+  <div class="team defense">
+    <div class="team-header">🛡️ ディフェンス — 資産防衛</div>
+    <div class="cards">
+
+      <div class="card">
+        <img src="images/ieyasu.jpg" alt="徳川家康"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="img-placeholder" style="display:none">🏯</div>
+        <div class="card-info">
+          <div class="card-name">徳川家康</div>
+          <div class="card-desc">修繕判断・空室対策・管理会社折衝</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="images/shoheikun.webp" alt="昌平君"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="img-placeholder" style="display:none">📊</div>
+        <div class="card-info">
+          <div class="card-name">昌平君</div>
+          <div class="card-desc">収支管理・確定申告・経費仕訳</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="images/zhuge.webp" alt="諸葛亮"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="img-placeholder" style="display:none">⚖️</div>
+        <div class="card-info">
+          <div class="card-name">諸葛亮</div>
+          <div class="card-desc">契約レビュー・滞納対応・立退き交渉</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

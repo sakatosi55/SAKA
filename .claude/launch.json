@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "team",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-Command", "$root='C:\\Users\\User\\Desktop\\realestate-ai-team-main\\realestate-ai-team-main'; $listener = New-Object System.Net.HttpListener; $listener.Prefixes.Add('http://localhost:3456/'); $listener.Start(); while ($true) { $ctx = $listener.GetContext(); $path = $ctx.Request.Url.LocalPath.TrimStart('/'); if ($path -eq '' -or $path -eq '/') { $path = 'team.html' }; $full = Join-Path $root $path; if (Test-Path $full) { $ext = [System.IO.Path]::GetExtension($full).ToLower(); $ct = if($ext -eq '.html'){'text/html'}elseif($ext -eq '.webp'){'image/webp'}elseif($ext -eq '.jpg' -or $ext -eq '.jpeg'){'image/jpeg'}else{'application/octet-stream'}; $ctx.Response.ContentType=$ct; $bytes = [System.IO.File]::ReadAllBytes($full); $ctx.Response.ContentLength64 = $bytes.Length; $ctx.Response.OutputStream.Write($bytes, 0, $bytes.Length) }else{ $ctx.Response.StatusCode=404 }; $ctx.Response.Close() }"],
+      "port": 3456
+    }
+  ]
+}

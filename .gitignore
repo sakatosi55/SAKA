@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Local Claude state (user-specific)
+.claude/settings.local.json
+.claude/agent-memory/
+.claude/worktrees/
+
+# Local override of CLAUDE.md (if user wants to keep personal info out of git)
+CLAUDE.local.md
+
+# Private data — users should keep tenant info, bank contacts, etc. out of git
+secretary/inbox/
+**/personal/
+**/private/
