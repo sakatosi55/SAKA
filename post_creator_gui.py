@@ -101,7 +101,8 @@ class PostCreatorApp:
         self.root.update()
 
     def scrape_rakuten_product(self, url):
-        """楽天商品ページから情報を抽出"""
+        """楽天商品ページから情報を抽出（JSON データを優先的に抽出）"""
+        import json
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
@@ -111,14 +112,38 @@ class PostCreatorApp:
             response.encoding = 'utf-8'
             html = response.text
 
-            # 商品名
+            # JSON データを抽出
+            product_data = {}
+
+            # script タグから JSON を抽出
+            json_pattern = r'<script[^>]*id="[^"]*"[^>]*type="application/json"[^>]*>({[^}]*"Item"[^}]*})</script>'
+            json_match = re.search(json_pattern, html, re.DOTALL)
+
+            if json_match:
+                try:
+                    product_data = json.loads(json_match.group(1))
+                    if "Item" in product_data:
+                        item = product_data["Item"]
+                        return {
+                            'itemName': item.get('itemName', '商品'),
+                            'itemPrice': int(item.get('itemPrice', 9999)),
+                            'reviewAverage': float(item.get('reviewAverage', 0)),
+                            'reviewCount': int(item.get('reviewCount', 0)),
+                            'itemCaption': item.get('itemCaption', '')[:100],
+                            'itemImage': item.get('itemImage', ''),
+                            'itemUrl': url
+                        }
+                except:
+                    pass
+
+            # JSON が見つからない場合は、HTML から抽出
             title_match = re.search(r'<h1[^>]*>([^<]+)</h1>', html)
             title = title_match.group(1).strip() if title_match else "商品"
 
-            # 価格
             price_patterns = [
                 r'<span[^>]*class="rakuten-pc-price-variable"[^>]*>¥\s*([\d,]+)',
                 r'"priceData":\s*{\s*"price":\s*"?(\d+)',
+                r'<span[^>]*class="price"[^>]*>¥([\d,]+)',
             ]
             price = "9999"
             for pattern in price_patterns:
@@ -127,22 +152,19 @@ class PostCreatorApp:
                     price = match.group(1).replace(',', '')
                     break
 
-            # 評価
             rating_match = re.search(r'"ratingAverage":\s*([0-9.]+)', html)
-            rating = rating_match.group(1) if rating_match else "4.5"
+            rating = rating_match.group(1) if rating_match else "0"
 
-            # レビュー数
             review_match = re.search(r'"reviewCount":\s*(\d+)', html)
-            review_count = review_match.group(1) if review_match else "100"
+            review_count = review_match.group(1) if review_match else "0"
 
-            # 説明
             desc_match = re.search(r'<meta[^>]*name="description"[^>]*content="([^"]+)"', html)
             description = desc_match.group(1)[:100] if desc_match else title[:100]
 
-            # 画像
             image_patterns = [
                 r'"imageUrl":\s*"([^"]+\.jpg[^"]*)',
-                r'<img[^>]*class="slider-image"[^>]*src="([^"]+)"',
+                r'<img[^>]*data-src="([^"]+)"',
+                r'<img[^>]*src="([^"]+\.jpg)"',
             ]
             image_url = ""
             for pattern in image_patterns:
@@ -153,20 +175,17 @@ class PostCreatorApp:
                         image_url = 'https:' + image_url if image_url.startswith('//') else 'https://' + image_url
                     break
 
-            if not image_url:
-                image_url = "https://thumbnail.image.rakuten.co.jp/@0_mall/example/product.jpg"
-
             return {
                 'itemName': title,
                 'itemPrice': int(price),
-                'reviewAverage': float(rating),
+                'reviewAverage': float(rating) if rating != "0" else 0,
                 'reviewCount': int(review_count),
                 'itemCaption': description,
                 'itemImage': image_url,
                 'itemUrl': url
             }
         except Exception as e:
-            self.set_status(f"⚠️ 取得エラー: {e} URLをそのまま使用します")
+            self.set_status(f"⚠️ 取得エラー: {e}")
             return {
                 'itemName': "楽天商品",
                 'itemPrice': 0,
