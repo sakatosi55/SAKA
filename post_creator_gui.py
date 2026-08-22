@@ -49,6 +49,9 @@ class PostCreatorApp:
         self.create_button = ttk.Button(button_frame, text="📝 投稿を作成", command=self.on_create_click)
         self.create_button.pack(side=tk.LEFT, padx=(0, 10))
 
+        self.copy_button = ttk.Button(button_frame, text="📋 コピー", command=self.on_copy_click, state=tk.DISABLED)
+        self.copy_button.pack(side=tk.LEFT, padx=(0, 10))
+
         self.clear_button = ttk.Button(button_frame, text="🗑️ クリア", command=self.on_clear_click)
         self.clear_button.pack(side=tk.LEFT)
 
@@ -235,9 +238,10 @@ class PostCreatorApp:
                 f.write(post)
 
             self.update_preview(post)
+            self.copy_button.config(state=tk.NORMAL)
             self.set_status(f"✅ 完成！保存先: {filepath}")
 
-            messagebox.showinfo("成功", f"投稿を作成しました！\n\n保存先: {filepath}\n\nコピーしてSNSに貼り付けてください")
+            messagebox.showinfo("成功", f"投稿を作成しました！\n\n保存先: {filepath}\n\n「📋 コピー」ボタンを押してSNSに貼り付けてください")
 
         except Exception as e:
             self.set_status(f"❌ エラー: {e}")
@@ -246,11 +250,23 @@ class PostCreatorApp:
         finally:
             self.create_button.config(state=tk.NORMAL)
 
+    def on_copy_click(self):
+        """投稿をクリップボードにコピー"""
+        text = self.preview_text.get(1.0, tk.END)
+        if text.strip():
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text)
+            self.set_status("✅ クリップボードにコピーしました")
+            messagebox.showinfo("成功", "投稿をコピーしました！\nSNSに貼り付けてください")
+        else:
+            messagebox.showwarning("警告", "投稿を作成してからコピーしてください")
+
     def on_clear_click(self):
         self.url_entry.delete(0, tk.END)
         self.url_entry.insert(0, "https://item.rakuten.co.jp/")
         self.update_preview("")
         self.set_status("準備完了")
+        self.copy_button.config(state=tk.DISABLED)
 
 if __name__ == "__main__":
     root = tk.Tk()
