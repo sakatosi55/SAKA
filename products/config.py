@@ -16,4 +16,4 @@ PRODUCTS_PER_DAY = 5  # 毎日取得する商品数
 POPULAR_THRESHOLD = 1000  # 人気度の閾値（レビュー数など）
 
 # 投稿設定
-POSTS_OUTPUT_DIR = str(Path.home() / "Desktop" / "楽天投稿")
+POSTS_OUTPUT_DIR = str(Path.home() / "Desktop" / "投稿")
