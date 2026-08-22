@@ -38,6 +38,10 @@ class PostCreatorApp:
         self.url_entry.pack(fill=tk.X, pady=(0, 20))
         self.url_entry.insert(0, "https://item.rakuten.co.jp/")
 
+        # ペースト機能を追加
+        self.url_entry.bind('<Control-v>', self.on_paste)
+        self.url_entry.bind('<Button-3>', self.on_right_click)
+
         # ボタンフレーム
         button_frame = ttk.Frame(main_frame)
         button_frame.pack(fill=tk.X, pady=(0, 20))
@@ -62,6 +66,25 @@ class PostCreatorApp:
 
         self.output_dir = Path.home() / "Desktop" / "投稿"
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    def on_paste(self, event=None):
+        """Ctrl+V ペースト"""
+        try:
+            text = self.root.clipboard_get()
+            self.url_entry.delete(0, tk.END)
+            self.url_entry.insert(0, text)
+        except:
+            pass
+        return "break"
+
+    def on_right_click(self, event):
+        """右クリックメニュー"""
+        try:
+            menu = tk.Menu(self.root, tearoff=0)
+            menu.add_command(label="貼り付け", command=lambda: self.on_paste())
+            menu.post(event.x_root, event.y_root)
+        except:
+            pass
 
     def set_status(self, message):
         self.status_label.config(text=message)
