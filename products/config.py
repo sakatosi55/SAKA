@@ -2,9 +2,6 @@
 楽天API設定
 """
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # 楽天API認証情報
 RAKUTEN_API_KEY = os.getenv("RAKUTEN_API_KEY", "")
