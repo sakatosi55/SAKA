@@ -166,14 +166,14 @@ class PostCreatorApp:
                 'itemUrl': url
             }
         except Exception as e:
-            self.set_status(f"⚠️ 取得エラー: {e} デフォルト値を使用します")
+            self.set_status(f"⚠️ 取得エラー: {e} URLをそのまま使用します")
             return {
-                'itemName': "新商品",
-                'itemPrice': 2980,
-                'reviewAverage': 4.5,
-                'reviewCount': 100,
-                'itemCaption': "人気商品。安全で高品質。",
-                'itemImage': "https://thumbnail.image.rakuten.co.jp/@0_mall/example/product.jpg",
+                'itemName': "楽天商品",
+                'itemPrice': 0,
+                'reviewAverage': 0,
+                'reviewCount': 0,
+                'itemCaption': "楽天の人気商品です。詳細はリンクをご確認ください。",
+                'itemImage': "",
                 'itemUrl': url
             }
 
