@@ -57,35 +57,103 @@ def generate_affiliate_link(item_url: str) -> str:
 
 
 def generate_post(item: dict) -> str:
-    """商品から投稿テキストを生成"""
+    """商品から投稿テキストを生成（複数テンプレートからランダム選択）"""
+    import random
+
     item_data = item.get("Item", {})
 
     title = item_data.get("itemName", "商品")
     price = item_data.get("itemPrice", "価格未定")
     image_url = item_data.get("itemUrl", "")
-    description = item_data.get("itemCaption", "")
+    description = item_data.get("itemCaption", "")[:100]  # 最初の100文字
     review_avg = item_data.get("reviewAverage", 0)
     review_count = item_data.get("reviewCount", 0)
 
     # アフィリエイトリンク
     affiliate_url = generate_affiliate_link(image_url)
 
-    # 投稿テンプレート
-    post = f"""
-📦 【楽天の注目商品】
+    # 複数の人気テンプレート
+    templates = [
+        # テンプレート1: 緊急性・限定感型
+        f"""🔥 今だけ絶対買い！
 
-🏷️ {title}
+{title}
 
-💰 価格: ¥{price:,}
-⭐ 評価: {review_avg}/5.0 ({review_count}件)
+💰 ¥{price:,}
+⭐ {review_avg}/5.0 ({review_count:,}件の評価)
+
+"{description}..."
+
+🛒 在庫限定で数量制限あり
+👉 {affiliate_url}
+
+#楽天 #掘り出し物 #今すぐチェック""",
+
+        # テンプレート2: 数字・メリット型
+        f"""💎 売上NO.1商品発見
+
+『{title}』
+
+✅ {review_count:,}人が購入
+✅ 評価 {review_avg}点
+✅ 価格 ¥{price:,}
 
 {description}
 
-🔗 詳細はこちら: {affiliate_url}
+詳しく見る↓
+{affiliate_url}
 
-#楽天 #商品紹介 #アフィリエイト
-""".strip()
+#楽天 #売れ筋 #おすすめ商品""",
 
+        # テンプレート3: 質問・共感型
+        f"""これ知ってた？🤔
+
+{title}
+💰 ¥{price:,}
+
+⭐評価{review_avg}点
+🎯{review_count:,}人が選んでる
+
+{description}
+
+気になったらチェック👇
+{affiliate_url}
+
+#楽天 #商品紹介 #買う価値あり""",
+
+        # テンプレート4: ストーリー型
+        f"""👍 みんなが選んでる理由
+
+{title}
+
+💯 {review_count:,}件のレビュー
+⭐ {review_avg}/5 の高評価
+💵 ¥{price:,}だからお手頃
+
+{description}
+
+くわしくはこちら👇
+{affiliate_url}
+
+#楽天 #イチオシ #この商品は本当にいい""",
+
+        # テンプレート5: シンプル・直球型
+        f"""🎁 今週の推し商品
+
+📌 {title}
+💰 {price:,}円
+⭐ {review_avg}点（{review_count:,}評価）
+
+{description}
+
+👉 詳細ページはこちら
+{affiliate_url}
+
+#楽天 #新商品 #チェック必須""",
+    ]
+
+    # ランダムにテンプレートを選択
+    post = random.choice(templates)
     return post
 
 
