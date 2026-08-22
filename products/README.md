@@ -32,11 +32,41 @@ RAKUTEN_API_KEY=your_rakuten_application_id_here
 RAKUTEN_AFFILIATE_ID=your_rakuten_affiliate_id_here
 ```
 
-### 4. 依存パッケージをインストール
+### 4. Twitter投稿設定（オプション）
+
+Twitterに自動投稿したい場合は、以下の手順を実施：
+
+#### 4-1. Twitter Developer登録
+
+1. https://developer.twitter.com/en/portal/dashboard にアクセス
+2. アプリケーションを作成
+3. 認証情報を取得：
+   - API Key (API_KEY)
+   - API Secret (API_SECRET)
+   - Access Token
+   - Access Token Secret
+   - Bearer Token
+
+#### 4-2. 環境変数に追加
+
+`.env` ファイルに以下を追加：
+
+```env
+TWITTER_API_KEY=your_twitter_api_key_here
+TWITTER_API_SECRET=your_twitter_api_secret_here
+TWITTER_ACCESS_TOKEN=your_twitter_access_token_here
+TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret_here
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token_here
+ENABLE_TWITTER_POSTING=true
+```
+
+### 5. 依存パッケージをインストール
 
 ```bash
 pip install -r products/requirements.txt
 ```
+
+> **注**: Twitter投稿を使用しない場合でも、`tweepy` がインストールされます。使用しない場合は、後述の「トラブルシューティング」を参照してください。
 
 ## 🚀 実行方法
 
@@ -136,20 +166,20 @@ params = {
 
 ## 📊 出力される投稿
 
-```
-📦 【楽天の注目商品】
+投稿は以下の5つのテンプレートからランダムに選択されます：
 
-🏷️ 商品名
+1. **緊急性・限定感型** — 「今だけ絶対買い！」
+2. **数字・メリット型** — 「売上NO.1商品発見」
+3. **質問・共感型** — 「これ知ってた？」
+4. **ストーリー型** — 「みんなが選んでる理由」
+5. **シンプル・直球型** — 「今週の推し商品」
 
-💰 価格: ¥12,345
-⭐ 評価: 4.5/5.0 (123件)
+すべての投稿にはアフィリエイトリンクが付与されます。
 
-商品説明...
+### 投稿先
 
-🔗 詳細はこちら: https://item.rakuten.co.jp/...?aid=xxxx
-
-#楽天 #商品紹介 #アフィリエイト
-```
+- **ファイル**: `products/posts/YYYYMMDD_HHMMSS_XX.md` に保存
+- **Twitter**: `ENABLE_TWITTER_POSTING=true` の場合、自動投稿されます
 
 ## ⚠️ トラブルシューティング
 
@@ -176,6 +206,31 @@ params = {
 
 - `schedule` パッケージがインストールされていることを確認
 - Python バージョンが 3.6 以上であることを確認
+
+### Twitter投稿エラー
+
+#### 認証エラー
+```
+❌ Twitter認証エラー: ...
+```
+
+- Twitter API認証情報が正しいことを確認
+- `.env` ファイルに全ての認証情報が設定されていることを確認
+- Twitter Developerポータルでアプリケーションのパーミッションが「Read and Write」に設定されていることを確認
+
+#### tweepyがインストールされていない
+```
+⚠️  tweepyがインストールされていません
+```
+
+```bash
+pip install tweepy
+```
+
+#### Twitter投稿が失敗する
+- APIレート制限を確認してください（15分あたり300投稿など）
+- ネットワーク接続を確認してください
+- Twitterアカウントのセキュリティ設定を確認してください
 
 ## 📝 ログ確認
 

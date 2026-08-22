@@ -15,7 +15,18 @@ from config import (
     RAKUTEN_PRODUCT_API_URL,
     PRODUCTS_PER_DAY,
     POSTS_OUTPUT_DIR,
+    ENABLE_TWITTER_POSTING,
+    TWITTER_API_KEY,
+    TWITTER_API_SECRET,
+    TWITTER_ACCESS_TOKEN,
+    TWITTER_ACCESS_TOKEN_SECRET,
 )
+
+try:
+    import tweepy
+    TWITTER_AVAILABLE = True
+except ImportError:
+    TWITTER_AVAILABLE = False
 
 
 def fetch_popular_products():
@@ -171,11 +182,60 @@ def save_post(post: str, timestamp: str) -> Path:
     return filepath
 
 
+def init_twitter_client():
+    """Twitter APIクライアントを初期化"""
+    if not TWITTER_AVAILABLE:
+        return None
+
+    if not all([TWITTER_API_KEY, TWITTER_API_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET]):
+        print("⚠️  Twitter認証情報が不完全です（ENABLE_TWITTER_POSTINGは有効ですが、認証情報が足りません）")
+        return None
+
+    try:
+        auth = tweepy.OAuthHandler(TWITTER_API_KEY, TWITTER_API_SECRET)
+        auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)
+        api = tweepy.API(auth)
+        return api
+    except Exception as e:
+        print(f"❌ Twitter認証エラー: {e}")
+        return None
+
+
+def post_to_twitter(api, post: str) -> bool:
+    """Twitterに投稿"""
+    if not api:
+        return False
+
+    try:
+        api.update_status(post)
+        print("✅ Twitterに投稿しました")
+        return True
+    except tweepy.TweepyException as e:
+        print(f"❌ Twitter投稿エラー: {e}")
+        return False
+    except Exception as e:
+        print(f"❌ 予期しないエラー: {e}")
+        return False
+
+
 def main():
     """メイン処理"""
     print("\n" + "="*50)
     print("🚀 楽天商品投稿自動生成を開始します")
     print("="*50 + "\n")
+
+    # Twitter投稿の初期化
+    twitter_api = None
+    if ENABLE_TWITTER_POSTING and TWITTER_AVAILABLE:
+        print("🐦 Twitter投稿を有効化しています...")
+        twitter_api = init_twitter_client()
+        if twitter_api:
+            print("✅ Twitterクライアントを初期化しました\n")
+        else:
+            print("⚠️  Twitterクライアントの初期化に失敗しました（ファイル保存のみ行います）\n")
+    elif ENABLE_TWITTER_POSTING and not TWITTER_AVAILABLE:
+        print("⚠️  tweepyがインストールされていません")
+        print("   Twitter投稿を有効化するには: pip install tweepy\n")
 
     # 商品を取得
     items = fetch_popular_products()
@@ -195,6 +255,11 @@ def main():
             filepath = save_post(post, f"{timestamp}_{i:02d}")
 
             print(f"✅ 投稿を保存しました: {filepath}")
+
+            # Twitter に投稿
+            if twitter_api:
+                post_to_twitter(twitter_api, post)
+
             print("\n--- 投稿内容 ---")
             print(post)
             print("--- 終了 ---\n")
