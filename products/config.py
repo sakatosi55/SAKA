@@ -3,6 +3,10 @@
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# .env ファイルを読み込む
+load_dotenv(Path(__file__).parent / ".env")
 
 # 楽天API認証情報
 RAKUTEN_API_KEY = os.getenv("RAKUTEN_API_KEY", "")
