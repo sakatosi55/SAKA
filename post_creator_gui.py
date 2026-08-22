@@ -101,100 +101,103 @@ class PostCreatorApp:
         self.root.update()
 
     def scrape_rakuten_product(self, url):
-        """楽天商品ページから情報を抽出（JSON データを優先的に抽出）"""
-        import json
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+        """Playwright でブラウザ自動化してページから情報を抽出"""
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            self.set_status("⚠️ Playwright がインストールされていません")
+            return self.get_default_product(url)
 
         try:
-            response = requests.get(url, headers=headers, timeout=10)
-            response.encoding = 'utf-8'
-            html = response.text
+            self.set_status("🌐 ブラウザでページを読み込み中...")
 
-            # JSON データを抽出
-            product_data = {}
+            with sync_playwright() as p:
+                browser = p.chromium.launch()
+                page = browser.new_page()
+                page.goto(url, wait_until="networkidle", timeout=30000)
 
-            # script タグから JSON を抽出
-            json_pattern = r'<script[^>]*id="[^"]*"[^>]*type="application/json"[^>]*>({[^}]*"Item"[^}]*})</script>'
-            json_match = re.search(json_pattern, html, re.DOTALL)
+                # ページが完全に読み込まれるまで待機
+                page.wait_for_selector("h1, [data-test='item-name']", timeout=10000)
 
-            if json_match:
-                try:
-                    product_data = json.loads(json_match.group(1))
-                    if "Item" in product_data:
-                        item = product_data["Item"]
-                        return {
-                            'itemName': item.get('itemName', '商品'),
-                            'itemPrice': int(item.get('itemPrice', 9999)),
-                            'reviewAverage': float(item.get('reviewAverage', 0)),
-                            'reviewCount': int(item.get('reviewCount', 0)),
-                            'itemCaption': item.get('itemCaption', '')[:100],
-                            'itemImage': item.get('itemImage', ''),
-                            'itemUrl': url
-                        }
-                except:
-                    pass
+                # JavaScript で情報を抽出
+                product_data = page.evaluate("""() => {
+                    // 商品名
+                    let title = document.querySelector("h1")?.innerText ||
+                                document.querySelector("[data-test='item-name']")?.innerText ||
+                                "商品";
 
-            # JSON が見つからない場合は、HTML から抽出
-            title_match = re.search(r'<h1[^>]*>([^<]+)</h1>', html)
-            title = title_match.group(1).strip() if title_match else "商品"
+                    // 価格
+                    let price = 0;
+                    let priceText = document.querySelector(".rakuten-pc-price-variable")?.innerText ||
+                                   document.querySelector("[data-test='price']")?.innerText ||
+                                   "";
+                    let match = priceText.match(/\\d+/g);
+                    if (match) price = parseInt(match.join(""));
 
-            price_patterns = [
-                r'<span[^>]*class="rakuten-pc-price-variable"[^>]*>¥\s*([\d,]+)',
-                r'"priceData":\s*{\s*"price":\s*"?(\d+)',
-                r'<span[^>]*class="price"[^>]*>¥([\d,]+)',
-            ]
-            price = "9999"
-            for pattern in price_patterns:
-                match = re.search(pattern, html)
-                if match:
-                    price = match.group(1).replace(',', '')
-                    break
+                    // 画像
+                    let image = document.querySelector(".slider-image")?.src ||
+                               document.querySelector("[data-test='item-image']")?.src ||
+                               document.querySelector("img[alt*='商品画像']")?.src ||
+                               "";
 
-            rating_match = re.search(r'"ratingAverage":\s*([0-9.]+)', html)
-            rating = rating_match.group(1) if rating_match else "0"
+                    // 評価
+                    let rating = 0;
+                    let ratingText = document.querySelector(".rating-value")?.innerText ||
+                                    document.querySelector("[data-test='rating']")?.innerText ||
+                                    "0";
+                    let ratingMatch = ratingText.match(/[0-9.]+/);
+                    if (ratingMatch) rating = parseFloat(ratingMatch[0]);
 
-            review_match = re.search(r'"reviewCount":\s*(\d+)', html)
-            review_count = review_match.group(1) if review_match else "0"
+                    // レビュー数
+                    let reviewCount = 0;
+                    let reviewText = document.querySelector(".review-count")?.innerText ||
+                                    document.querySelector("[data-test='review-count']")?.innerText ||
+                                    "0";
+                    let reviewMatch = reviewText.match(/\\d+/);
+                    if (reviewMatch) reviewCount = parseInt(reviewMatch[0]);
 
-            desc_match = re.search(r'<meta[^>]*name="description"[^>]*content="([^"]+)"', html)
-            description = desc_match.group(1)[:100] if desc_match else title[:100]
+                    // 説明
+                    let description = document.querySelector("meta[name='description']")?.content ||
+                                     document.querySelector(".item-caption")?.innerText ||
+                                     title;
 
-            image_patterns = [
-                r'"imageUrl":\s*"([^"]+\.jpg[^"]*)',
-                r'<img[^>]*data-src="([^"]+)"',
-                r'<img[^>]*src="([^"]+\.jpg)"',
-            ]
-            image_url = ""
-            for pattern in image_patterns:
-                match = re.search(pattern, html)
-                if match:
-                    image_url = match.group(1)
-                    if not image_url.startswith('http'):
-                        image_url = 'https:' + image_url if image_url.startswith('//') else 'https://' + image_url
-                    break
+                    return {
+                        title: title.trim(),
+                        price: price,
+                        image: image,
+                        rating: rating,
+                        reviewCount: reviewCount,
+                        description: description.substring(0, 100)
+                    };
+                }""")
 
-            return {
-                'itemName': title,
-                'itemPrice': int(price),
-                'reviewAverage': float(rating) if rating != "0" else 0,
-                'reviewCount': int(review_count),
-                'itemCaption': description,
-                'itemImage': image_url,
-                'itemUrl': url
-            }
+                browser.close()
+
+                return {
+                    'itemName': product_data.get('title', '商品'),
+                    'itemPrice': product_data.get('price', 0),
+                    'reviewAverage': product_data.get('rating', 0),
+                    'reviewCount': product_data.get('reviewCount', 0),
+                    'itemCaption': product_data.get('description', '楽天商品'),
+                    'itemImage': product_data.get('image', ''),
+                    'itemUrl': url
+                }
+
         except Exception as e:
-            self.set_status(f"⚠️ 取得エラー: {e}")
-            return {
-                'itemName': "楽天商品",
-                'itemPrice': 0,
-                'reviewAverage': 0,
-                'reviewCount': 0,
-                'itemCaption': "楽天の人気商品です。詳細はリンクをご確認ください。",
-                'itemImage': "",
-                'itemUrl': url
-            }
+            self.set_status(f"⚠️ 読み込みエラー: {e}")
+            return self.get_default_product(url)
+
+    def get_default_product(self, url):
+        """デフォルト商品情報を返す"""
+        return {
+            'itemName': "楽天商品",
+            'itemPrice': 0,
+            'reviewAverage': 0,
+            'reviewCount': 0,
+            'itemCaption': "楽天の商品です。詳細はリンクをご確認ください。",
+            'itemImage': "",
+            'itemUrl': url
+        }
 
     def generate_affiliate_link(self, item_url):
         separator = "&" if "?" in item_url else "?"
