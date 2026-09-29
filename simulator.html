@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不動産投資シミュレーション</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0d0d1a;
+    --panel: #15152a;
+    --panel-border: #2a2a45;
+    --text: #f0e6d3;
+    --muted: #8a8aa0;
+    --gold: #d4a843;
+    --gold-dim: #8a7332;
+    --offense: #e05555;
+    --defense: #5588e0;
+    --good: #4fc78a;
+    --bad: #e06868;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 80px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.9rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 32px;
+  }
+  .layout {
+    display: flex;
+    gap: 24px;
+    max-width: 1180px;
+    margin: 0 auto;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .col-input { flex: 1 1 380px; min-width: 320px; }
+  .col-output { flex: 2 1 560px; min-width: 320px; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .panel h2 {
+    font-size: 0.95rem;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .field label {
+    font-size: 0.82rem;
+    color: var(--text);
+    flex: 1;
+  }
+  .field .hint {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .field-input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  input[type="number"] {
+    width: 100px;
+    background: #0d0d1a;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    text-align: right;
+  }
+  input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  select {
+    background: #0d0d1a;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+  .unit { font-size: 0.75rem; color: var(--muted); width: 32px; }
+
+  .sample-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+  .sample-btn:hover { background: rgba(212,168,67,0.08); }
+
+  /* 結果サマリー */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .kpi {
+    background: #0d0d1a;
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 14px 14px;
+  }
+  .kpi-label { font-size: 0.68rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.03em; }
+  .kpi-value { font-size: 1.3rem; font-weight: bold; color: var(--text); }
+  .kpi-value.gold { color: var(--gold); }
+  .kpi-value.good { color: var(--good); }
+  .kpi-value.bad { color: var(--bad); }
+  .kpi-sub { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+
+  .warn {
+    background: rgba(224,85,85,0.1);
+    border: 1px solid var(--offense);
+    color: #ffb3b3;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    margin-bottom: 16px;
+  }
+
+  /* チャート */
+  .chart-legend {
+    display: flex;
+    gap: 18px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .chart-legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  /* テーブル */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+  }
+  thead th {
+    text-align: right;
+    color: var(--gold);
+    font-weight: normal;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--panel-border);
+    white-space: nowrap;
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td {
+    text-align: right;
+    padding: 6px 8px;
+    border-bottom: 1px solid #1c1c30;
+    white-space: nowrap;
+  }
+  tbody tr:hover { background: rgba(212,168,67,0.05); }
+  .cf-pos { color: var(--good); }
+  .cf-neg { color: var(--bad); }
+  .table-wrap { max-height: 360px; overflow-y: auto; overflow-x: auto; }
+  table { min-width: 640px; }
+
+  .footer-note {
+    max-width: 1180px;
+    margin: 24px auto 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.72rem;
+    line-height: 1.8;
+  }
+  .footer-note .gold { color: var(--gold-dim); }
+
+  @media (max-width: 720px) {
+    .field { flex-wrap: wrap; }
+    input[type="number"] { width: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>不動産投資シミュレーション</h1>
+<p class="subtitle">物件情報を入力すると、収支・利回り・IRRをリアルタイムで試算します</p>
+
+<div class="layout">
+  <!-- 入力パネル -->
+  <div class="col-input">
+    <button class="sample-btn" id="loadSample">サンプル物件の数値を読み込む</button>
+
+    <div class="panel">
+      <h2>物件情報</h2>
+      <div class="field">
+        <label>物件価格<span class="hint">土地・建物合計</span></label>
+        <div class="field-input"><input type="number" id="price" value="5000" step="10"><span class="unit">万円</span></div>
+      </div>
+      <div class="field">
+        <label>諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
+        <div class="field-input"><input type="number" id="acqCostRate" value="7" step="0.5"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label>自己資金（頭金＋諸費用分）</label>
+        <div class="field-input"><input type="number" id="selfFund" value="800" step="10"><span class="unit">万円</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>融資条件</h2>
+      <div class="field">
+        <label>金利</label>
+        <div class="field-input"><input type="number" id="rate" value="2.0" step="0.05"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label>返済期間</label>
+        <div class="field-input"><input type="number" id="loanYears" value="30" step="1"><span class="unit">年</span></div>
+      </div>
+      <div class="field">
+        <label>返済方式</label>
+        <div class="field-input">
+          <select id="repayMethod">
+            <option value="equalPayment">元利均等</option>
+            <option value="equalPrincipal">元金均等</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>収益・費用</h2>
+      <div class="field">
+        <label>満室想定年間家賃収入</label>
+        <div class="field-input"><input type="number" id="grossRent" value="480" step="5"><span class="unit">万円</span></div>
+      </div>
+      <div class="field">
+        <label>空室率</label>
+        <div class="field-input"><input type="number" id="vacancy" value="5" step="0.5"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label>運営費率<span class="hint">管理費・修繕積立・保険・固都税等／実効収入に対する割合</span></label>
+        <div class="field-input"><input type="number" id="opexRate" value="20" step="1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label>年間家賃下落率<span class="hint">築年経過による下落想定</span></label>
+        <div class="field-input"><input type="number" id="rentDecline" value="0.5" step="0.1"><span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>売却（出口）条件</h2>
+      <div class="field">
+        <label>保有年数</label>
+        <div class="field-input"><input type="number" id="holdYears" value="10" step="1"><span class="unit">年</span></div>
+      </div>
+      <div class="field">
+        <label>売却価格の算出方法</label>
+        <div class="field-input">
+          <select id="exitMethod">
+            <option value="capRate">売却時利回りから算出</option>
+            <option value="appreciation">価格変動率から算出</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="exitCapField">
+        <label>売却時想定利回り<span class="hint">売却年のNOIを還元</span></label>
+        <div class="field-input"><input type="number" id="exitCapRate" value="8" step="0.1"><span class="unit">%</span></div>
+      </div>
+      <div class="field" id="exitApprField" style="display:none;">
+        <label>年間価格変動率<span class="hint">マイナスで下落</span></label>
+        <div class="field-input"><input type="number" id="apprRate" value="-1" step="0.1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label>売却諸費用率</label>
+        <div class="field-input"><input type="number" id="sellCostRate" value="5" step="0.5"><span class="unit">%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果パネル -->
+  <div class="col-output">
+    <div class="panel">
+      <h2>サマリー（初年度・売却時点）</h2>
+      <div id="warnBox"></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">表面利回り</div><div class="kpi-value gold" id="kpiGrossYield">-</div></div>
+        <div class="kpi"><div class="kpi-label">実質利回り（初年度）</div><div class="kpi-value gold" id="kpiNetYield">-</div></div>
+        <div class="kpi"><div class="kpi-label">借入額</div><div class="kpi-value" id="kpiLoan">-</div></div>
+        <div class="kpi"><div class="kpi-label">年間返済額（初年度）</div><div class="kpi-value" id="kpiDebtService">-</div></div>
+        <div class="kpi"><div class="kpi-label">初年度キャッシュフロー</div><div class="kpi-value" id="kpiCF1">-</div></div>
+        <div class="kpi"><div class="kpi-label">自己資金回収率（CCR）</div><div class="kpi-value" id="kpiCCR">-</div></div>
+        <div class="kpi"><div class="kpi-label">DSCR（返済余裕率）</div><div class="kpi-value" id="kpiDSCR">-</div></div>
+        <div class="kpi"><div class="kpi-label">保有期間中 累計CF</div><div class="kpi-value" id="kpiCumCF">-</div></div>
+        <div class="kpi"><div class="kpi-label">売却時 手取り</div><div class="kpi-value" id="kpiNetSale">-</div></div>
+        <div class="kpi"><div class="kpi-label">IRR（自己資金ベース）</div><div class="kpi-value good" id="kpiIRR">-</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>年次キャッシュフロー推移</h2>
+      <div id="chartWrap"></div>
+      <div class="chart-legend">
+        <span><i class="dot" style="background:#4fc78a"></i>単年CF（黒字）</span>
+        <span><i class="dot" style="background:#e06868"></i>単年CF（赤字）</span>
+        <span><i class="dot" style="background:#d4a843"></i>累計CF</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>年次収支テーブル</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>年</th>
+              <th>家賃収入</th>
+              <th>運営費</th>
+              <th>NOI</th>
+              <th>元金</th>
+              <th>利息</th>
+              <th>返済計</th>
+              <th>CF</th>
+              <th>累計CF</th>
+              <th>残債</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="footer-note">
+  本シミュレーションは概算です。実際の融資条件・税務影響・出口戦略の判断は<br>
+  <span class="gold">渋沢栄一（融資）</span>・<span class="gold">昌平君（経理）</span>・<span class="gold">曹操（戦略）</span>・<span class="gold">伊能忠敬（ファクトチェック）</span>にご相談ください。
+</p>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const fmtMan = (v) => (Math.round(v * 10) / 10).toLocaleString('ja-JP', { maximumFractionDigits: 1 }) + '万円';
+  const fmtPct = (v) => (Math.round(v * 100) / 100).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '%';
+
+  const inputs = ['price','acqCostRate','selfFund','rate','loanYears','repayMethod',
+    'grossRent','vacancy','opexRate','rentDecline','holdYears','exitMethod',
+    'exitCapRate','apprRate','sellCostRate'];
+
+  inputs.forEach(id => {
+    $(id).addEventListener('input', recalc);
+    $(id).addEventListener('change', recalc);
+  });
+
+  $('exitMethod').addEventListener('change', () => {
+    const isCap = $('exitMethod').value === 'capRate';
+    $('exitCapField').style.display = isCap ? 'flex' : 'none';
+    $('exitApprField').style.display = isCap ? 'none' : 'flex';
+  });
+
+  $('loadSample').addEventListener('click', () => {
+    const sample = {
+      price: 5000, acqCostRate: 7, selfFund: 800, rate: 2.0, loanYears: 30,
+      repayMethod: 'equalPayment', grossRent: 480, vacancy: 5, opexRate: 20,
+      rentDecline: 0.5, holdYears: 10, exitMethod: 'capRate', exitCapRate: 8,
+      apprRate: -1, sellCostRate: 5
+    };
+    Object.entries(sample).forEach(([k, v]) => { $(k).value = v; });
+    $('exitCapField').style.display = 'flex';
+    $('exitApprField').style.display = 'none';
+    recalc();
+  });
+
+  function buildAmortSchedule(loan, annualRatePct, loanYears, months, method) {
+    const rm = annualRatePct / 100 / 12;
+    const totalMonths = loanYears * 12;
+    let balance = loan;
+    let pmt = 0;
+    if (method === 'equalPayment') {
+      pmt = rm > 0
+        ? loan * rm / (1 - Math.pow(1 + rm, -totalMonths))
+        : loan / totalMonths;
+    }
+    const principalPerMonth = loan / totalMonths;
+    const schedule = [];
+    for (let m = 1; m <= months; m++) {
+      if (balance <= 0.0001 || m > totalMonths) {
+        schedule.push({ interest: 0, principal: 0, payment: 0, balance: Math.max(balance, 0) });
+        continue;
+      }
+      const interest = balance * rm;
+      let principal;
+      if (method === 'equalPayment') {
+        principal = Math.min(pmt - interest, balance);
+      } else {
+        principal = Math.min(principalPerMonth, balance);
+      }
+      const payment = interest + principal;
+      balance = Math.max(balance - principal, 0);
+      schedule.push({ interest, principal, payment, balance });
+    }
+    return schedule;
+  }
+
+  function aggregateYearly(monthlySchedule, years) {
+    const yearly = [];
+    for (let y = 0; y < years; y++) {
+      const slice = monthlySchedule.slice(y * 12, y * 12 + 12);
+      const interest = slice.reduce((s, m) => s + m.interest, 0);
+      const principal = slice.reduce((s, m) => s + m.principal, 0);
+      const payment = slice.reduce((s, m) => s + m.payment, 0);
+      const endBalance = slice.length ? slice[slice.length - 1].balance : 0;
+      yearly.push({ interest, principal, payment, endBalance });
+    }
+    return yearly;
+  }
+
+  function irr(cashflows) {
+    const npv = (r) => cashflows.reduce((sum, cf, t) => sum + cf / Math.pow(1 + r, t), 0);
+    let lo = -0.99, hi = 10;
+    let fLo = npv(lo), fHi = npv(hi);
+    if (isNaN(fLo) || isNaN(fHi) || fLo * fHi > 0) return null;
+    for (let i = 0; i < 200; i++) {
+      const mid = (lo + hi) / 2;
+      const fMid = npv(mid);
+      if (Math.abs(fMid) < 1e-6) return mid;
+      if (fLo * fMid < 0) { hi = mid; fHi = fMid; } else { lo = mid; fLo = fMid; }
+    }
+    return (lo + hi) / 2;
+  }
+
+  function recalc() {
+    const price = parseFloat($('price').value) || 0;
+    const acqCostRate = parseFloat($('acqCostRate').value) || 0;
+    const selfFund = parseFloat($('selfFund').value) || 0;
+    const rate = parseFloat($('rate').value) || 0;
+    const loanYears = Math.max(1, parseInt($('loanYears').value) || 1);
+    const repayMethod = $('repayMethod').value;
+    const grossRent = parseFloat($('grossRent').value) || 0;
+    const vacancy = parseFloat($('vacancy').value) || 0;
+    const opexRate = parseFloat($('opexRate').value) || 0;
+    const rentDecline = parseFloat($('rentDecline').value) || 0;
+    const holdYears = Math.max(1, Math.min(60, parseInt($('holdYears').value) || 1));
+    const exitMethod = $('exitMethod').value;
+    const exitCapRate = parseFloat($('exitCapRate').value) || 0;
+    const apprRate = parseFloat($('apprRate').value) || 0;
+    const sellCostRate = parseFloat($('sellCostRate').value) || 0;
+
+    const acqCost = price * acqCostRate / 100;
+    const totalInvestment = price + acqCost;
+    const loan = Math.max(0, totalInvestment - selfFund);
+    const actualSelfFund = Math.min(selfFund, totalInvestment);
+
+    const warnBox = $('warnBox');
+    warnBox.innerHTML = '';
+    if (selfFund > totalInvestment) {
+      warnBox.innerHTML = '<div class="warn">自己資金が総投資額（物件価格＋諸費用）を上回っています。借入なし・フルキャッシュ購入として計算しています。</div>';
+    }
+    if (price <= 0) {
+      warnBox.innerHTML += '<div class="warn">物件価格を入力してください。</div>';
+    }
+
+    const scheduleMonths = Math.max(loanYears, holdYears) * 12;
+    const monthlySchedule = buildAmortSchedule(loan, rate, loanYears, scheduleMonths, repayMethod);
+    const yearlyLoan = aggregateYearly(monthlySchedule, holdYears);
+
+    const years = [];
+    let cumCF = 0;
+    for (let y = 1; y <= holdYears; y++) {
+      const rentThisYear = grossRent * Math.pow(1 - rentDecline / 100, y - 1);
+      const effectiveIncome = rentThisYear * (1 - vacancy / 100);
+      const opex = effectiveIncome * opexRate / 100;
+      const noi = effectiveIncome - opex;
+      const loanYear = yearlyLoan[y - 1] || { interest: 0, principal: 0, payment: 0, endBalance: 0 };
+      const cf = noi - loanYear.payment;
+      cumCF += cf;
+      years.push({
+        year: y, rent: effectiveIncome, opex, noi,
+        principal: loanYear.principal, interest: loanYear.interest,
+        debtService: loanYear.payment, cf, cumCF, endBalance: loanYear.endBalance
+      });
+    }
+
+    const y1 = years[0];
+    const grossYield = price > 0 ? (grossRent / price) * 100 : 0;
+    const netYield = price > 0 ? (y1.noi / price) * 100 : 0;
+    const ccr = actualSelfFund > 0 ? (y1.cf / actualSelfFund) * 100 : 0;
+    const dscr = y1.debtService > 0 ? y1.noi / y1.debtService : null;
+
+    const exitYearData = years[holdYears - 1];
+    let salePrice;
+    if (exitMethod === 'capRate') {
+      salePrice = exitCapRate > 0 ? exitYearData.noi / (exitCapRate / 100) : 0;
+    } else {
+      salePrice = price * Math.pow(1 + apprRate / 100, holdYears);
+    }
+    const sellCost = salePrice * sellCostRate / 100;
+    const remainingBalance = exitYearData.endBalance;
+    const netSaleProceeds = salePrice - sellCost - remainingBalance;
+
+    const equityCashflows = [-actualSelfFund];
+    years.forEach((yr, idx) => {
+      if (idx === years.length - 1) {
+        equityCashflows.push(yr.cf + netSaleProceeds);
+      } else {
+        equityCashflows.push(yr.cf);
+      }
+    });
+    const irrValue = irr(equityCashflows);
+
+    $('kpiGrossYield').textContent = fmtPct(grossYield);
+    $('kpiNetYield').textContent = fmtPct(netYield);
+    $('kpiLoan').textContent = fmtMan(loan);
+    $('kpiDebtService').textContent = fmtMan(y1.debtService);
+    $('kpiCF1').textContent = fmtMan(y1.cf);
+    $('kpiCF1').className = 'kpi-value ' + (y1.cf >= 0 ? 'good' : 'bad');
+    $('kpiCCR').textContent = actualSelfFund > 0 ? fmtPct(ccr) : 'N/A';
+    $('kpiDSCR').textContent = dscr !== null ? (Math.round(dscr * 100) / 100).toFixed(2) : 'N/A';
+    $('kpiCumCF').textContent = fmtMan(cumCF);
+    $('kpiCumCF').className = 'kpi-value ' + (cumCF >= 0 ? 'good' : 'bad');
+    $('kpiNetSale').textContent = fmtMan(netSaleProceeds);
+    $('kpiIRR').textContent = irrValue !== null ? fmtPct(irrValue * 100) : '算出不可';
+
+    renderTable(years);
+    renderChart(years);
+  }
+
+  function renderTable(years) {
+    const tbody = $('tableBody');
+    tbody.innerHTML = years.map(y => `
+      <tr>
+        <td>${y.year}年目</td>
+        <td>${fmtMan(y.rent)}</td>
+        <td>${fmtMan(y.opex)}</td>
+        <td>${fmtMan(y.noi)}</td>
+        <td>${fmtMan(y.principal)}</td>
+        <td>${fmtMan(y.interest)}</td>
+        <td>${fmtMan(y.debtService)}</td>
+        <td class="${y.cf >= 0 ? 'cf-pos' : 'cf-neg'}">${fmtMan(y.cf)}</td>
+        <td class="${y.cumCF >= 0 ? 'cf-pos' : 'cf-neg'}">${fmtMan(y.cumCF)}</td>
+        <td>${fmtMan(y.endBalance)}</td>
+      </tr>
+    `).join('');
+  }
+
+  function renderChart(years) {
+    const W = 760, H = 280;
+    const padL = 60, padR = 20, padT = 16, padB = 30;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+    const n = years.length;
+
+    const cfVals = years.map(y => y.cf);
+    const cumVals = years.map(y => y.cumCF);
+    const allVals = cfVals.concat(cumVals, [0]);
+    const maxV = Math.max(...allVals);
+    const minV = Math.min(...allVals);
+    const range = (maxV - minV) || 1;
+    const yScale = (v) => padT + plotH - ((v - minV) / range) * plotH;
+    const zeroY = yScale(0);
+
+    const barW = Math.max(4, (plotW / n) * 0.5);
+    const step = plotW / n;
+
+    let bars = '';
+    years.forEach((y, i) => {
+      const x = padL + i * step + (step - barW) / 2;
+      const yTop = Math.min(zeroY, yScale(y.cf));
+      const barH = Math.abs(yScale(y.cf) - zeroY);
+      const color = y.cf >= 0 ? '#4fc78a' : '#e06868';
+      bars += `<rect x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(barH,1).toFixed(1)}" fill="${color}" opacity="0.85"><title>${y.year}年目 CF: ${fmtMan(y.cf)}</title></rect>`;
+    });
+
+    const linePoints = years.map((y, i) => {
+      const x = padL + i * step + step / 2;
+      const yy = yScale(y.cumCF);
+      return `${x.toFixed(1)},${yy.toFixed(1)}`;
+    }).join(' ');
+
+    const dots = years.map((y, i) => {
+      const x = padL + i * step + step / 2;
+      const yy = yScale(y.cumCF);
+      return `<circle cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="2.6" fill="#d4a843"><title>${y.year}年目 累計CF: ${fmtMan(y.cumCF)}</title></circle>`;
+    }).join('');
+
+    const xLabels = years.map((y, i) => {
+      if (n > 15 && y.year % 2 !== 0 && y.year !== n) return '';
+      const x = padL + i * step + step / 2;
+      return `<text x="${x.toFixed(1)}" y="${H - 8}" font-size="9" fill="#8a8aa0" text-anchor="middle">${y.year}</text>`;
+    }).join('');
+
+    const yTicks = [minV, 0, maxV].filter((v, i, arr) => arr.indexOf(v) === i);
+    const yLabels = yTicks.map(v => {
+      const yy = yScale(v);
+      return `<text x="${padL - 8}" y="${(yy + 3).toFixed(1)}" font-size="9" fill="#8a8aa0" text-anchor="end">${Math.round(v)}</text>
+        <line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W - padR}" y2="${yy.toFixed(1)}" stroke="#1c1c30" stroke-width="1"/>`;
+    }).join('');
+
+    const svg = `
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">
+        ${yLabels}
+        <line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W - padR}" y2="${zeroY.toFixed(1)}" stroke="#3a3a55" stroke-width="1"/>
+        ${bars}
+        <polyline points="${linePoints}" fill="none" stroke="#d4a843" stroke-width="2"/>
+        ${dots}
+        ${xLabels}
+      </svg>
+    `;
+    $('chartWrap').innerHTML = svg;
+  }
+
+  recalc();
+})();
+</script>
+
+</body>
+</html>
