@@ -7,42 +7,43 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #0d0d1a;
-    --panel: #15152a;
-    --panel-border: #2a2a45;
-    --text: #f0e6d3;
-    --muted: #8a8aa0;
-    --gold: #d4a843;
-    --gold-dim: #8a7332;
-    --offense: #e05555;
-    --defense: #5588e0;
-    --good: #4fc78a;
-    --bad: #e06868;
+    --bg: #eef1f7;
+    --panel: #ffffff;
+    --panel-border: #dde2ec;
+    --text: #1c2333;
+    --muted: #707891;
+    --accent: #2f5fd1;
+    --accent-dim: #dde6fb;
+    --good: #1a9f6c;
+    --good-bg: #e6f7ef;
+    --bad: #d64545;
+    --bad-bg: #fdecec;
+    --field-bg: #f7f8fb;
   }
   body {
     background: var(--bg);
     color: var(--text);
     font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', sans-serif;
     min-height: 100vh;
-    padding: 32px 16px 80px;
+    padding: 28px 16px 80px;
   }
   h1 {
     text-align: center;
-    font-size: 1.9rem;
-    color: var(--gold);
-    letter-spacing: 0.12em;
+    font-size: 1.7rem;
+    color: var(--text);
+    letter-spacing: 0.06em;
     margin-bottom: 6px;
   }
   .subtitle {
     text-align: center;
     color: var(--muted);
-    font-size: 0.85rem;
-    margin-bottom: 32px;
+    font-size: 0.82rem;
+    margin-bottom: 28px;
   }
   .layout {
     display: flex;
-    gap: 24px;
-    max-width: 1180px;
+    gap: 20px;
+    max-width: 1200px;
     margin: 0 auto;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -53,33 +54,35 @@
   .panel {
     background: var(--panel);
     border: 1px solid var(--panel-border);
-    border-radius: 14px;
-    padding: 20px 22px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(20,30,60,0.04);
   }
   .panel h2 {
-    font-size: 0.95rem;
-    color: var(--gold);
-    letter-spacing: 0.06em;
-    margin-bottom: 16px;
+    font-size: 0.88rem;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--panel-border);
   }
+  .panel h2 .h2-note { color: var(--muted); font-weight: normal; font-size: 0.7rem; margin-left: 6px; }
   .field {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 11px;
   }
   .field label {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--text);
     flex: 1;
   }
   .field .hint {
     display: block;
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     color: var(--muted);
     margin-top: 2px;
   }
@@ -91,77 +94,174 @@
   }
   input[type="number"] {
     width: 100px;
-    background: #0d0d1a;
+    background: var(--field-bg);
     border: 1px solid var(--panel-border);
     border-radius: 6px;
     color: var(--text);
     padding: 6px 8px;
     font-size: 0.85rem;
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
   input[type="number"]:focus, select:focus {
     outline: none;
-    border-color: var(--gold);
+    border-color: var(--accent);
   }
   select {
-    background: #0d0d1a;
+    background: var(--field-bg);
     border: 1px solid var(--panel-border);
     border-radius: 6px;
     color: var(--text);
     padding: 6px 8px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
-  .unit { font-size: 0.75rem; color: var(--muted); width: 32px; }
+  .unit { font-size: 0.72rem; color: var(--muted); width: 32px; }
 
   .sample-btn {
     display: block;
     width: 100%;
-    background: transparent;
-    border: 1px solid var(--gold-dim);
-    color: var(--gold);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #fff;
     border-radius: 8px;
-    padding: 9px;
+    padding: 10px;
     font-size: 0.8rem;
     cursor: pointer;
-    margin-bottom: 20px;
-    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+    font-weight: bold;
   }
-  .sample-btn:hover { background: rgba(212,168,67,0.08); }
+  .sample-btn:hover { opacity: 0.9; }
+
+  .computed-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .computed {
+    flex: 1;
+    background: var(--accent-dim);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .computed .c-label { font-size: 0.66rem; color: var(--accent); margin-bottom: 3px; }
+  .computed .c-value { font-size: 1.05rem; font-weight: bold; color: var(--accent); font-variant-numeric: tabular-nums; }
 
   /* 結果サマリー */
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
   .kpi {
-    background: #0d0d1a;
+    background: var(--field-bg);
     border: 1px solid var(--panel-border);
     border-radius: 10px;
-    padding: 14px 14px;
+    padding: 12px 14px;
   }
-  .kpi-label { font-size: 0.68rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.03em; }
-  .kpi-value { font-size: 1.3rem; font-weight: bold; color: var(--text); }
-  .kpi-value.gold { color: var(--gold); }
+  .kpi-label { font-size: 0.66rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.02em; }
+  .kpi-value { font-size: 1.25rem; font-weight: bold; color: var(--text); font-variant-numeric: tabular-nums; }
+  .kpi-value.accent { color: var(--accent); }
   .kpi-value.good { color: var(--good); }
   .kpi-value.bad { color: var(--bad); }
-  .kpi-sub { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
 
   .warn {
-    background: rgba(224,85,85,0.1);
-    border: 1px solid var(--offense);
-    color: #ffb3b3;
+    background: var(--bad-bg);
+    border: 1px solid var(--bad);
+    color: #9c2c2c;
     border-radius: 8px;
     padding: 10px 14px;
-    font-size: 0.78rem;
-    margin-bottom: 16px;
+    font-size: 0.76rem;
+    margin-bottom: 14px;
   }
+
+  /* 総合判定 */
+  .verdict-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-weight: bold;
+  }
+  .verdict-banner.pass { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+  .verdict-banner.fail { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); }
+  .verdict-banner .v-title { font-size: 1.1rem; }
+  .verdict-banner .v-count { font-size: 0.78rem; font-weight: normal; }
+
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .criteria-card {
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--panel-border);
+    background: var(--field-bg);
+  }
+  .criteria-card.pass { border-color: var(--good); background: var(--good-bg); }
+  .criteria-card.fail { border-color: var(--bad); background: var(--bad-bg); }
+  .cc-head { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; }
+  .cc-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: #fff; flex-shrink: 0; }
+  .cc-icon.pass { background: var(--good); }
+  .cc-icon.fail { background: var(--bad); }
+  .cc-sub { font-size: 0.64rem; color: var(--muted); margin-bottom: 6px; }
+  .cc-value { font-size: 1.1rem; font-weight: bold; font-variant-numeric: tabular-nums; }
+  .criteria-card.pass .cc-value { color: var(--good); }
+  .criteria-card.fail .cc-value { color: var(--bad); }
+
+  /* 指値ライン */
+  .offer-line {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .offer-box {
+    flex: 1 1 220px;
+    background: var(--field-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .offer-box .ob-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; }
+  .offer-box .ob-value { font-size: 1.5rem; font-weight: bold; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .offer-box .ob-sub { font-size: 0.72rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .offer-box.binding { border-color: var(--accent); }
+  .offer-box .ob-binding-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; }
+  .offer-box .ob-binding-value { font-size: 1.1rem; font-weight: bold; color: var(--text); }
+
+  table.criteria-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+  }
+  table.criteria-table th {
+    text-align: right;
+    color: var(--accent);
+    font-weight: normal;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  table.criteria-table th:first-child, table.criteria-table td:first-child { text-align: left; }
+  table.criteria-table td {
+    text-align: right;
+    padding: 7px 8px;
+    border-bottom: 1px solid #eef0f5;
+  }
+  .judge-icon { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; font-size: 0.68rem; color: #fff; }
+  .judge-icon.pass { background: var(--good); }
+  .judge-icon.fail { background: var(--bad); }
 
   /* チャート */
   .chart-legend {
     display: flex;
     gap: 18px;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--muted);
     margin-top: 10px;
     flex-wrap: wrap;
@@ -173,11 +273,12 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.76rem;
+    font-size: 0.74rem;
+    font-variant-numeric: tabular-nums;
   }
   thead th {
     text-align: right;
-    color: var(--gold);
+    color: var(--accent);
     font-weight: normal;
     padding: 6px 8px;
     border-bottom: 1px solid var(--panel-border);
@@ -187,24 +288,24 @@
   tbody td {
     text-align: right;
     padding: 6px 8px;
-    border-bottom: 1px solid #1c1c30;
+    border-bottom: 1px solid #eef0f5;
     white-space: nowrap;
   }
-  tbody tr:hover { background: rgba(212,168,67,0.05); }
+  tbody tr:hover { background: #f5f8ff; }
   .cf-pos { color: var(--good); }
   .cf-neg { color: var(--bad); }
   .table-wrap { max-height: 360px; overflow-y: auto; overflow-x: auto; }
   table { min-width: 640px; }
 
   .footer-note {
-    max-width: 1180px;
-    margin: 24px auto 0;
+    max-width: 1200px;
+    margin: 20px auto 0;
     text-align: center;
     color: var(--muted);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     line-height: 1.8;
   }
-  .footer-note .gold { color: var(--gold-dim); }
+  .footer-note .accent { color: var(--accent); }
 
   @media (max-width: 720px) {
     .field { flex-wrap: wrap; }
@@ -215,7 +316,7 @@
 <body>
 
 <h1>不動産投資シミュレーション</h1>
-<p class="subtitle">物件情報を入力すると、収支・利回り・IRRをリアルタイムで試算します</p>
+<p class="subtitle">物件情報を入力すると、合否判定・指値ライン・収支・IRRをリアルタイムで試算します</p>
 
 <div class="layout">
   <!-- 入力パネル -->
@@ -225,31 +326,31 @@
     <div class="panel">
       <h2>物件情報</h2>
       <div class="field">
-        <label>物件価格<span class="hint">土地・建物合計</span></label>
-        <div class="field-input"><input type="number" id="price" value="5000" step="10"><span class="unit">万円</span></div>
+        <label for="price">物件価格<span class="hint">土地・建物合計</span></label>
+        <div class="field-input"><input type="number" id="price" value="5200" step="10"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label>諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
+        <label for="acqCostRate">諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
         <div class="field-input"><input type="number" id="acqCostRate" value="7" step="0.5"><span class="unit">%</span></div>
-      </div>
-      <div class="field">
-        <label>自己資金（頭金＋諸費用分）</label>
-        <div class="field-input"><input type="number" id="selfFund" value="800" step="10"><span class="unit">万円</span></div>
       </div>
     </div>
 
     <div class="panel">
       <h2>融資条件</h2>
       <div class="field">
-        <label>金利</label>
-        <div class="field-input"><input type="number" id="rate" value="2.0" step="0.05"><span class="unit">%</span></div>
+        <label for="ltv">LTV（借入 ÷ 価格）</label>
+        <div class="field-input"><input type="number" id="ltv" value="90" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label>返済期間</label>
-        <div class="field-input"><input type="number" id="loanYears" value="30" step="1"><span class="unit">年</span></div>
+        <label for="rate">金利</label>
+        <div class="field-input"><input type="number" id="rate" value="3.5" step="0.05"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label>返済方式</label>
+        <label for="loanYears">返済期間</label>
+        <div class="field-input"><input type="number" id="loanYears" value="20" step="1"><span class="unit">年</span></div>
+      </div>
+      <div class="field">
+        <label for="repayMethod">返済方式</label>
         <div class="field-input">
           <select id="repayMethod">
             <option value="equalPayment">元利均等</option>
@@ -257,36 +358,64 @@
           </select>
         </div>
       </div>
+      <div class="computed-row">
+        <div class="computed"><div class="c-label">借入額</div><div class="c-value" id="cLoan">-</div></div>
+        <div class="computed"><div class="c-label">自己資金</div><div class="c-value" id="cSelfFund">-</div></div>
+      </div>
     </div>
 
     <div class="panel">
       <h2>収益・費用</h2>
       <div class="field">
-        <label>満室想定年間家賃収入</label>
-        <div class="field-input"><input type="number" id="grossRent" value="480" step="5"><span class="unit">万円</span></div>
+        <label for="grossRent">満室想定年間家賃収入</label>
+        <div class="field-input"><input type="number" id="grossRent" value="502" step="5"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label>空室率</label>
-        <div class="field-input"><input type="number" id="vacancy" value="5" step="0.5"><span class="unit">%</span></div>
+        <label for="vacancy">空室率</label>
+        <div class="field-input"><input type="number" id="vacancy" value="10" step="0.5"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label>運営費率<span class="hint">管理費・修繕積立・保険・固都税等／実効収入に対する割合</span></label>
-        <div class="field-input"><input type="number" id="opexRate" value="20" step="1"><span class="unit">%</span></div>
+        <label for="opexRate">運営費率<span class="hint">管理費・修繕積立・保険・固都税等／実効収入に対する割合</span></label>
+        <div class="field-input"><input type="number" id="opexRate" value="15" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label>年間家賃下落率<span class="hint">築年経過による下落想定</span></label>
+        <label for="rentDecline">年間家賃下落率<span class="hint">築年経過による下落想定</span></label>
         <div class="field-input"><input type="number" id="rentDecline" value="0.5" step="0.1"><span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>投資基準<span class="h2-note">総合判定・指値ラインに使用</span></h2>
+      <div class="field">
+        <label for="selfFundCap">自己資金の上限<span class="hint">1物件あたり</span></label>
+        <div class="field-input"><input type="number" id="selfFundCap" value="1000" step="50"><span class="unit">万円</span></div>
+      </div>
+      <div class="field">
+        <label for="ccrThreshold">CCR基準<span class="hint">年間CF÷自己資金</span></label>
+        <div class="field-input"><input type="number" id="ccrThreshold" value="20" step="1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label for="stressVacancy">ストレス空室率</label>
+        <div class="field-input"><input type="number" id="stressVacancy" value="15" step="1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label for="stressRateDelta">ストレス金利上乗せ</label>
+        <div class="field-input"><input type="number" id="stressRateDelta" value="2.0" step="0.1"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label for="stressCfThreshold">ストレス下CF基準</label>
+        <div class="field-input"><input type="number" id="stressCfThreshold" value="0" step="10"><span class="unit">万円</span></div>
       </div>
     </div>
 
     <div class="panel">
       <h2>売却（出口）条件</h2>
       <div class="field">
-        <label>保有年数</label>
+        <label for="holdYears">保有年数</label>
         <div class="field-input"><input type="number" id="holdYears" value="10" step="1"><span class="unit">年</span></div>
       </div>
       <div class="field">
-        <label>売却価格の算出方法</label>
+        <label for="exitMethod">売却価格の算出方法</label>
         <div class="field-input">
           <select id="exitMethod">
             <option value="capRate">売却時利回りから算出</option>
@@ -295,15 +424,15 @@
         </div>
       </div>
       <div class="field" id="exitCapField">
-        <label>売却時想定利回り<span class="hint">売却年のNOIを還元</span></label>
+        <label for="exitCapRate">売却時想定利回り<span class="hint">売却年のNOIを還元</span></label>
         <div class="field-input"><input type="number" id="exitCapRate" value="8" step="0.1"><span class="unit">%</span></div>
       </div>
       <div class="field" id="exitApprField" style="display:none;">
-        <label>年間価格変動率<span class="hint">マイナスで下落</span></label>
+        <label for="apprRate">年間価格変動率<span class="hint">マイナスで下落</span></label>
         <div class="field-input"><input type="number" id="apprRate" value="-1" step="0.1"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label>売却諸費用率</label>
+        <label for="sellCostRate">売却諸費用率</label>
         <div class="field-input"><input type="number" id="sellCostRate" value="5" step="0.5"><span class="unit">%</span></div>
       </div>
     </div>
@@ -312,15 +441,60 @@
   <!-- 結果パネル -->
   <div class="col-output">
     <div class="panel">
-      <h2>サマリー（初年度・売却時点）</h2>
+      <h2>総合判定</h2>
       <div id="warnBox"></div>
+      <div class="verdict-banner" id="verdictBanner">
+        <div class="v-title" id="verdictTitle">-</div>
+        <div class="v-count" id="verdictCount">-</div>
+      </div>
+      <div class="criteria-grid">
+        <div class="criteria-card" id="cardSelfFund">
+          <div class="cc-head"><span class="cc-icon" id="iconSelfFund">-</span>自己資金</div>
+          <div class="cc-sub">1物件あたりの上限 ／ 基準 <span id="subSelfFundCap">-</span>以下</div>
+          <div class="cc-value" id="valSelfFund">-</div>
+        </div>
+        <div class="criteria-card" id="cardCCR">
+          <div class="cc-head"><span class="cc-icon" id="iconCCR">-</span>CCR</div>
+          <div class="cc-sub">年間CF÷自己資金 ／ 基準 <span id="subCCR">-</span>以上</div>
+          <div class="cc-value" id="valCCR">-</div>
+        </div>
+        <div class="criteria-card" id="cardStress">
+          <div class="cc-head"><span class="cc-icon" id="iconStress">-</span>ストレス下CF</div>
+          <div class="cc-sub" id="subStress">空室◯％＋金利＋◯％ ／ 基準以上</div>
+          <div class="cc-value" id="valStress">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>指値ライン</h2>
+      <div class="offer-line">
+        <div class="offer-box" id="ceilingBox">
+          <div class="ob-label">全基準クリアの上限価格</div>
+          <div class="ob-value" id="ceilingPrice">-</div>
+          <div class="ob-sub" id="ceilingSub">-</div>
+        </div>
+        <div class="offer-box binding">
+          <div class="ob-binding-label">効いている基準</div>
+          <div class="ob-binding-value" id="bindingCriterion">-</div>
+          <div class="ob-sub" id="bindingSub">-</div>
+        </div>
+      </div>
+      <table class="criteria-table">
+        <thead>
+          <tr><th>基準</th><th>いまの値</th><th>判定</th><th>この基準を満たす上限価格</th></tr>
+        </thead>
+        <tbody id="criteriaTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>サマリー（初年度・売却時点）</h2>
       <div class="kpi-grid">
-        <div class="kpi"><div class="kpi-label">表面利回り</div><div class="kpi-value gold" id="kpiGrossYield">-</div></div>
-        <div class="kpi"><div class="kpi-label">実質利回り（初年度）</div><div class="kpi-value gold" id="kpiNetYield">-</div></div>
-        <div class="kpi"><div class="kpi-label">借入額</div><div class="kpi-value" id="kpiLoan">-</div></div>
+        <div class="kpi"><div class="kpi-label">表面利回り</div><div class="kpi-value accent" id="kpiGrossYield">-</div></div>
+        <div class="kpi"><div class="kpi-label">実質利回り（初年度）</div><div class="kpi-value accent" id="kpiNetYield">-</div></div>
         <div class="kpi"><div class="kpi-label">年間返済額（初年度）</div><div class="kpi-value" id="kpiDebtService">-</div></div>
         <div class="kpi"><div class="kpi-label">初年度キャッシュフロー</div><div class="kpi-value" id="kpiCF1">-</div></div>
-        <div class="kpi"><div class="kpi-label">自己資金回収率（CCR）</div><div class="kpi-value" id="kpiCCR">-</div></div>
         <div class="kpi"><div class="kpi-label">DSCR（返済余裕率）</div><div class="kpi-value" id="kpiDSCR">-</div></div>
         <div class="kpi"><div class="kpi-label">保有期間中 累計CF</div><div class="kpi-value" id="kpiCumCF">-</div></div>
         <div class="kpi"><div class="kpi-label">売却時 手取り</div><div class="kpi-value" id="kpiNetSale">-</div></div>
@@ -332,9 +506,9 @@
       <h2>年次キャッシュフロー推移</h2>
       <div id="chartWrap"></div>
       <div class="chart-legend">
-        <span><i class="dot" style="background:#4fc78a"></i>単年CF（黒字）</span>
-        <span><i class="dot" style="background:#e06868"></i>単年CF（赤字）</span>
-        <span><i class="dot" style="background:#d4a843"></i>累計CF</span>
+        <span><i class="dot" style="background:#1a9f6c"></i>単年CF（黒字）</span>
+        <span><i class="dot" style="background:#d64545"></i>単年CF（赤字）</span>
+        <span><i class="dot" style="background:#2f5fd1"></i>累計CF</span>
       </div>
     </div>
 
@@ -365,7 +539,7 @@
 
 <p class="footer-note">
   本シミュレーションは概算です。実際の融資条件・税務影響・出口戦略の判断は<br>
-  <span class="gold">渋沢栄一（融資）</span>・<span class="gold">昌平君（経理）</span>・<span class="gold">曹操（戦略）</span>・<span class="gold">伊能忠敬（ファクトチェック）</span>にご相談ください。
+  <span class="accent">渋沢栄一（融資）</span>・<span class="accent">昌平君（経理）</span>・<span class="accent">曹操（戦略）</span>・<span class="accent">伊能忠敬（ファクトチェック）</span>にご相談ください。
 </p>
 
 <script>
@@ -374,9 +548,10 @@
   const fmtMan = (v) => (Math.round(v * 10) / 10).toLocaleString('ja-JP', { maximumFractionDigits: 1 }) + '万円';
   const fmtPct = (v) => (Math.round(v * 100) / 100).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '%';
 
-  const inputs = ['price','acqCostRate','selfFund','rate','loanYears','repayMethod',
-    'grossRent','vacancy','opexRate','rentDecline','holdYears','exitMethod',
-    'exitCapRate','apprRate','sellCostRate'];
+  const inputs = ['price','acqCostRate','ltv','rate','loanYears','repayMethod',
+    'grossRent','vacancy','opexRate','rentDecline',
+    'selfFundCap','ccrThreshold','stressVacancy','stressRateDelta','stressCfThreshold',
+    'holdYears','exitMethod','exitCapRate','apprRate','sellCostRate'];
 
   inputs.forEach(id => {
     $(id).addEventListener('input', recalc);
@@ -391,10 +566,11 @@
 
   $('loadSample').addEventListener('click', () => {
     const sample = {
-      price: 5000, acqCostRate: 7, selfFund: 800, rate: 2.0, loanYears: 30,
-      repayMethod: 'equalPayment', grossRent: 480, vacancy: 5, opexRate: 20,
-      rentDecline: 0.5, holdYears: 10, exitMethod: 'capRate', exitCapRate: 8,
-      apprRate: -1, sellCostRate: 5
+      price: 5200, acqCostRate: 7, ltv: 90, rate: 3.5, loanYears: 20,
+      repayMethod: 'equalPayment', grossRent: 502, vacancy: 10, opexRate: 15,
+      rentDecline: 0.5, selfFundCap: 1000, ccrThreshold: 20, stressVacancy: 15,
+      stressRateDelta: 2.0, stressCfThreshold: 0,
+      holdYears: 10, exitMethod: 'capRate', exitCapRate: 8, apprRate: -1, sellCostRate: 5
     };
     Object.entries(sample).forEach(([k, v]) => { $(k).value = v; });
     $('exitCapField').style.display = 'flex';
@@ -404,7 +580,7 @@
 
   function buildAmortSchedule(loan, annualRatePct, loanYears, months, method) {
     const rm = annualRatePct / 100 / 12;
-    const totalMonths = loanYears * 12;
+    const totalMonths = Math.max(1, Math.round(loanYears * 12));
     let balance = loan;
     let pmt = 0;
     if (method === 'equalPayment') {
@@ -446,6 +622,12 @@
     return yearly;
   }
 
+  function annualDebtServiceYear1(loan, ratePct, years, method) {
+    if (loan <= 0) return 0;
+    const sched = buildAmortSchedule(loan, ratePct, years, 12, method);
+    return sched.reduce((s, m) => s + m.payment, 0);
+  }
+
   function irr(cashflows) {
     const npv = (r) => cashflows.reduce((sum, cf, t) => sum + cf / Math.pow(1 + r, t), 0);
     let lo = -0.99, hi = 10;
@@ -460,10 +642,28 @@
     return (lo + hi) / 2;
   }
 
+  // Bisection for a monotonically DECREASING metric(price) function.
+  // Returns the price where metric(price) == target, or null if metric never
+  // crosses target within the search range (i.e. the criterion never binds).
+  function solvePriceForMetric(metricFn, target, hi) {
+    const lo = 0.01;
+    const fLo = metricFn(lo);
+    const fHi = metricFn(hi);
+    if (fLo < target) return lo; // fails even at near-zero price
+    if (fHi > target) return null; // never fails within range -> not binding
+    let a = lo, b = hi;
+    for (let i = 0; i < 80; i++) {
+      const mid = (a + b) / 2;
+      const fMid = metricFn(mid);
+      if (fMid > target) { a = mid; } else { b = mid; }
+    }
+    return (a + b) / 2;
+  }
+
   function recalc() {
     const price = parseFloat($('price').value) || 0;
     const acqCostRate = parseFloat($('acqCostRate').value) || 0;
-    const selfFund = parseFloat($('selfFund').value) || 0;
+    const ltv = parseFloat($('ltv').value) || 0;
     const rate = parseFloat($('rate').value) || 0;
     const loanYears = Math.max(1, parseInt($('loanYears').value) || 1);
     const repayMethod = $('repayMethod').value;
@@ -471,27 +671,41 @@
     const vacancy = parseFloat($('vacancy').value) || 0;
     const opexRate = parseFloat($('opexRate').value) || 0;
     const rentDecline = parseFloat($('rentDecline').value) || 0;
+
+    const selfFundCap = parseFloat($('selfFundCap').value) || 0;
+    const ccrThreshold = parseFloat($('ccrThreshold').value) || 0;
+    const stressVacancy = parseFloat($('stressVacancy').value) || 0;
+    const stressRateDelta = parseFloat($('stressRateDelta').value) || 0;
+    const stressCfThreshold = parseFloat($('stressCfThreshold').value) || 0;
+
     const holdYears = Math.max(1, Math.min(60, parseInt($('holdYears').value) || 1));
     const exitMethod = $('exitMethod').value;
     const exitCapRate = parseFloat($('exitCapRate').value) || 0;
     const apprRate = parseFloat($('apprRate').value) || 0;
     const sellCostRate = parseFloat($('sellCostRate').value) || 0;
 
+    $('subStress').textContent = `空室${stressVacancy}％＋金利+${stressRateDelta}％ ／ 基準${fmtMan(stressCfThreshold)}以上`;
+    $('subSelfFundCap').textContent = fmtMan(selfFundCap);
+    $('subCCR').textContent = fmtPct(ccrThreshold);
+
     const acqCost = price * acqCostRate / 100;
     const totalInvestment = price + acqCost;
-    const loan = Math.max(0, totalInvestment - selfFund);
-    const actualSelfFund = Math.min(selfFund, totalInvestment);
+    const loan = Math.max(0, price * ltv / 100);
+    const selfFund = totalInvestment - loan; // may be negative (over-loan)
+
+    $('cLoan').textContent = fmtMan(loan);
+    $('cSelfFund').textContent = fmtMan(selfFund);
 
     const warnBox = $('warnBox');
     warnBox.innerHTML = '';
-    if (selfFund > totalInvestment) {
-      warnBox.innerHTML = '<div class="warn">自己資金が総投資額（物件価格＋諸費用）を上回っています。借入なし・フルキャッシュ購入として計算しています。</div>';
-    }
     if (price <= 0) {
       warnBox.innerHTML += '<div class="warn">物件価格を入力してください。</div>';
     }
+    if (selfFund < 0) {
+      warnBox.innerHTML += '<div class="warn">LTVが総投資比率を上回っており、自己資金がマイナス（オーバーローン）です。CCRは算出できません。</div>';
+    }
 
-    const scheduleMonths = Math.max(loanYears, holdYears) * 12;
+    const scheduleMonths = holdYears * 12;
     const monthlySchedule = buildAmortSchedule(loan, rate, loanYears, scheduleMonths, repayMethod);
     const yearlyLoan = aggregateYearly(monthlySchedule, holdYears);
 
@@ -515,8 +729,87 @@
     const y1 = years[0];
     const grossYield = price > 0 ? (grossRent / price) * 100 : 0;
     const netYield = price > 0 ? (y1.noi / price) * 100 : 0;
-    const ccr = actualSelfFund > 0 ? (y1.cf / actualSelfFund) * 100 : 0;
+    const ccr = selfFund > 0 ? (y1.cf / selfFund) * 100 : null;
     const dscr = y1.debtService > 0 ? y1.noi / y1.debtService : null;
+
+    // ストレス下CF（初年度）: 空室率上昇 + 金利上乗せ
+    const stressEffectiveIncome = grossRent * (1 - stressVacancy / 100);
+    const stressOpex = stressEffectiveIncome * opexRate / 100;
+    const stressNOI = stressEffectiveIncome - stressOpex;
+    const stressDebtService = annualDebtServiceYear1(loan, rate + stressRateDelta, loanYears, repayMethod);
+    const stressCF = stressNOI - stressDebtService;
+
+    // 総合判定
+    const selfFundPass = selfFund <= selfFundCap;
+    const ccrPass = ccr !== null && ccr >= ccrThreshold;
+    const stressPass = stressCF >= stressCfThreshold;
+    const passCount = [selfFundPass, ccrPass, stressPass].filter(Boolean).length;
+    const overallPass = passCount === 3;
+
+    renderVerdict(overallPass, passCount);
+    renderCriteriaCard('cardSelfFund', 'iconSelfFund', 'valSelfFund', selfFundPass, fmtMan(selfFund));
+    renderCriteriaCard('cardCCR', 'iconCCR', 'valCCR', ccrPass, ccr !== null ? fmtPct(ccr) : 'N/A');
+    renderCriteriaCard('cardStress', 'iconStress', 'valStress', stressPass, fmtMan(stressCF));
+
+    // 指値ライン: 賃料・LTV・諸費用率・金利・返済期間・運営費率を固定し、価格を動かして
+    // 各基準がちょうど効く価格を二分探索で求める（各指標は価格に対して単調減少）。
+    const k = 1 + acqCostRate / 100 - ltv / 100; // selfFund(P) = P * k
+    const selfFundThresholdPrice = k > 0 ? selfFundCap / k : null;
+
+    const ccrMetric = (P) => {
+      const L = P * ltv / 100;
+      const sf = P * k;
+      if (sf <= 0) return Infinity;
+      const ds = annualDebtServiceYear1(L, rate, loanYears, repayMethod);
+      const cf = y1.noi - ds;
+      return (cf / sf) * 100;
+    };
+    const stressMetric = (P) => {
+      const L = P * ltv / 100;
+      const ds = annualDebtServiceYear1(L, rate + stressRateDelta, loanYears, repayMethod);
+      return stressNOI - ds;
+    };
+    const searchHi = Math.max(price, 1) * 20 + 1000;
+    const ccrThresholdPrice = solvePriceForMetric(ccrMetric, ccrThreshold, searchHi);
+    const stressThresholdPrice = solvePriceForMetric(stressMetric, stressCfThreshold, searchHi);
+
+    const candidates = [
+      { key: 'selfFund', label: '自己資金', price: selfFundThresholdPrice },
+      { key: 'ccr', label: 'CCR', price: ccrThresholdPrice },
+      { key: 'stress', label: 'ストレス下CF', price: stressThresholdPrice }
+    ].filter(c => c.price !== null && isFinite(c.price));
+
+    renderCriteriaTable([
+      { label: 'CCR', value: ccr !== null ? fmtPct(ccr) : 'N/A', pass: ccrPass, priceLabel: ccrThresholdPrice !== null ? fmtMan(ccrThresholdPrice) : '基準内（上限なし）' },
+      { label: 'ストレス下CF', value: fmtMan(stressCF), pass: stressPass, priceLabel: stressThresholdPrice !== null ? fmtMan(stressThresholdPrice) : '基準内（上限なし）' },
+      { label: '自己資金', value: fmtMan(selfFund), pass: selfFundPass, priceLabel: selfFundThresholdPrice !== null ? fmtMan(selfFundThresholdPrice) : '基準内（上限なし）' }
+    ]);
+
+    if (candidates.length === 0) {
+      $('ceilingPrice').textContent = '上限なし';
+      $('ceilingSub').textContent = 'すべての基準について、現在の設定範囲では上限価格が見つかりませんでした。';
+      $('bindingCriterion').textContent = '-';
+      $('bindingSub').textContent = '-';
+    } else {
+      candidates.sort((a, b) => a.price - b.price);
+      const ceiling = candidates[0];
+      $('ceilingPrice').textContent = fmtMan(ceiling.price);
+      const diff = price - ceiling.price;
+      $('ceilingSub').textContent = diff > 0
+        ? `売出価格から ${fmtMan(diff)} の指値が必要`
+        : '現在の価格は全基準の範囲内です';
+      $('bindingCriterion').textContent = ceiling.label;
+      $('bindingSub').textContent = `基準「${ceiling.label}」が最初に効きます`;
+    }
+
+    $('kpiGrossYield').textContent = fmtPct(grossYield);
+    $('kpiNetYield').textContent = fmtPct(netYield);
+    $('kpiDebtService').textContent = fmtMan(y1.debtService);
+    $('kpiCF1').textContent = fmtMan(y1.cf);
+    $('kpiCF1').className = 'kpi-value ' + (y1.cf >= 0 ? 'good' : 'bad');
+    $('kpiDSCR').textContent = dscr !== null ? (Math.round(dscr * 100) / 100).toFixed(2) : 'N/A';
+    $('kpiCumCF').textContent = fmtMan(cumCF);
+    $('kpiCumCF').className = 'kpi-value ' + (cumCF >= 0 ? 'good' : 'bad');
 
     const exitYearData = years[holdYears - 1];
     let salePrice;
@@ -528,8 +821,9 @@
     const sellCost = salePrice * sellCostRate / 100;
     const remainingBalance = exitYearData.endBalance;
     const netSaleProceeds = salePrice - sellCost - remainingBalance;
+    $('kpiNetSale').textContent = fmtMan(netSaleProceeds);
 
-    const equityCashflows = [-actualSelfFund];
+    const equityCashflows = [-Math.max(selfFund, 0)];
     years.forEach((yr, idx) => {
       if (idx === years.length - 1) {
         equityCashflows.push(yr.cf + netSaleProceeds);
@@ -538,22 +832,36 @@
       }
     });
     const irrValue = irr(equityCashflows);
-
-    $('kpiGrossYield').textContent = fmtPct(grossYield);
-    $('kpiNetYield').textContent = fmtPct(netYield);
-    $('kpiLoan').textContent = fmtMan(loan);
-    $('kpiDebtService').textContent = fmtMan(y1.debtService);
-    $('kpiCF1').textContent = fmtMan(y1.cf);
-    $('kpiCF1').className = 'kpi-value ' + (y1.cf >= 0 ? 'good' : 'bad');
-    $('kpiCCR').textContent = actualSelfFund > 0 ? fmtPct(ccr) : 'N/A';
-    $('kpiDSCR').textContent = dscr !== null ? (Math.round(dscr * 100) / 100).toFixed(2) : 'N/A';
-    $('kpiCumCF').textContent = fmtMan(cumCF);
-    $('kpiCumCF').className = 'kpi-value ' + (cumCF >= 0 ? 'good' : 'bad');
-    $('kpiNetSale').textContent = fmtMan(netSaleProceeds);
     $('kpiIRR').textContent = irrValue !== null ? fmtPct(irrValue * 100) : '算出不可';
 
     renderTable(years);
     renderChart(years);
+  }
+
+  function renderVerdict(pass, count) {
+    const banner = $('verdictBanner');
+    banner.className = 'verdict-banner ' + (pass ? 'pass' : 'fail');
+    $('verdictTitle').textContent = pass ? 'OK（全基準クリア）' : '見送り';
+    $('verdictCount').textContent = `${count}/3 が◯`;
+  }
+
+  function renderCriteriaCard(cardId, iconId, valId, pass, valueText) {
+    $(cardId).className = 'criteria-card ' + (pass ? 'pass' : 'fail');
+    const icon = $(iconId);
+    icon.className = 'cc-icon ' + (pass ? 'pass' : 'fail');
+    icon.textContent = pass ? '○' : '×';
+    $(valId).textContent = valueText;
+  }
+
+  function renderCriteriaTable(rows) {
+    $('criteriaTableBody').innerHTML = rows.map(r => `
+      <tr>
+        <td>${r.label}</td>
+        <td>${r.value}</td>
+        <td><span class="judge-icon ${r.pass ? 'pass' : 'fail'}">${r.pass ? '○' : '×'}</span></td>
+        <td>${r.priceLabel}</td>
+      </tr>
+    `).join('');
   }
 
   function renderTable(years) {
@@ -576,7 +884,7 @@
 
   function renderChart(years) {
     const W = 760, H = 280;
-    const padL = 60, padR = 20, padT = 16, padB = 30;
+    const padL = 66, padR = 20, padT = 16, padB = 30;
     const plotW = W - padL - padR;
     const plotH = H - padT - padB;
     const n = years.length;
@@ -598,8 +906,8 @@
       const x = padL + i * step + (step - barW) / 2;
       const yTop = Math.min(zeroY, yScale(y.cf));
       const barH = Math.abs(yScale(y.cf) - zeroY);
-      const color = y.cf >= 0 ? '#4fc78a' : '#e06868';
-      bars += `<rect x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(barH,1).toFixed(1)}" fill="${color}" opacity="0.85"><title>${y.year}年目 CF: ${fmtMan(y.cf)}</title></rect>`;
+      const color = y.cf >= 0 ? '#1a9f6c' : '#d64545';
+      bars += `<rect x="${x.toFixed(1)}" y="${yTop.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(barH,1).toFixed(1)}" fill="${color}" opacity="0.88"><title>${y.year}年目 CF: ${fmtMan(y.cf)}</title></rect>`;
     });
 
     const linePoints = years.map((y, i) => {
@@ -611,28 +919,28 @@
     const dots = years.map((y, i) => {
       const x = padL + i * step + step / 2;
       const yy = yScale(y.cumCF);
-      return `<circle cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="2.6" fill="#d4a843"><title>${y.year}年目 累計CF: ${fmtMan(y.cumCF)}</title></circle>`;
+      return `<circle cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="2.6" fill="#2f5fd1"><title>${y.year}年目 累計CF: ${fmtMan(y.cumCF)}</title></circle>`;
     }).join('');
 
     const xLabels = years.map((y, i) => {
       if (n > 15 && y.year % 2 !== 0 && y.year !== n) return '';
       const x = padL + i * step + step / 2;
-      return `<text x="${x.toFixed(1)}" y="${H - 8}" font-size="9" fill="#8a8aa0" text-anchor="middle">${y.year}</text>`;
+      return `<text x="${x.toFixed(1)}" y="${H - 8}" font-size="9" fill="#707891" text-anchor="middle">${y.year}</text>`;
     }).join('');
 
     const yTicks = [minV, 0, maxV].filter((v, i, arr) => arr.indexOf(v) === i);
     const yLabels = yTicks.map(v => {
       const yy = yScale(v);
-      return `<text x="${padL - 8}" y="${(yy + 3).toFixed(1)}" font-size="9" fill="#8a8aa0" text-anchor="end">${Math.round(v)}</text>
-        <line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W - padR}" y2="${yy.toFixed(1)}" stroke="#1c1c30" stroke-width="1"/>`;
+      return `<text x="${padL - 8}" y="${(yy + 3).toFixed(1)}" font-size="9" fill="#707891" text-anchor="end">${Math.round(v).toLocaleString('ja-JP')}</text>
+        <line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W - padR}" y2="${yy.toFixed(1)}" stroke="#eef0f5" stroke-width="1"/>`;
     }).join('');
 
     const svg = `
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">
         ${yLabels}
-        <line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W - padR}" y2="${zeroY.toFixed(1)}" stroke="#3a3a55" stroke-width="1"/>
+        <line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W - padR}" y2="${zeroY.toFixed(1)}" stroke="#c7cede" stroke-width="1"/>
         ${bars}
-        <polyline points="${linePoints}" fill="none" stroke="#d4a843" stroke-width="2"/>
+        <polyline points="${linePoints}" fill="none" stroke="#2f5fd1" stroke-width="2"/>
         ${dots}
         ${xLabels}
       </svg>
