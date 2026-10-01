@@ -321,13 +321,14 @@
 <div class="layout">
   <!-- 入力パネル -->
   <div class="col-input">
-    <button class="sample-btn" id="loadSample">サンプル物件の数値を読み込む</button>
+    <button class="sample-btn" id="loadSample">ブルーベイyorii7 の数値を再読み込み</button>
+    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">寄居駅7分 一棟売アパート／埼玉県大里郡寄居町寄居569-1</p>
 
     <div class="panel">
       <h2>物件情報</h2>
       <div class="field">
         <label for="price">物件価格<span class="hint">土地・建物合計</span></label>
-        <div class="field-input"><input type="number" id="price" value="5200" step="10"><span class="unit">万円</span></div>
+        <div class="field-input"><input type="number" id="price" value="2380" step="10"><span class="unit">万円</span></div>
       </div>
       <div class="field">
         <label for="acqCostRate">諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
@@ -347,7 +348,7 @@
       </div>
       <div class="field">
         <label for="loanYears">返済期間</label>
-        <div class="field-input"><input type="number" id="loanYears" value="20" step="1"><span class="unit">年</span></div>
+        <div class="field-input"><input type="number" id="loanYears" value="19" step="1"><span class="unit">年</span></div>
       </div>
       <div class="field">
         <label for="repayMethod">返済方式</label>
@@ -368,7 +369,7 @@
       <h2>収益・費用</h2>
       <div class="field">
         <label for="grossRent">満室想定年間家賃収入</label>
-        <div class="field-input"><input type="number" id="grossRent" value="502" step="5"><span class="unit">万円</span></div>
+        <div class="field-input"><input type="number" id="grossRent" value="202.8" step="5"><span class="unit">万円</span></div>
       </div>
       <div class="field">
         <label for="vacancy">空室率</label>
@@ -566,8 +567,8 @@
 
   $('loadSample').addEventListener('click', () => {
     const sample = {
-      price: 5200, acqCostRate: 7, ltv: 90, rate: 3.5, loanYears: 20,
-      repayMethod: 'equalPayment', grossRent: 502, vacancy: 10, opexRate: 15,
+      price: 2380, acqCostRate: 7, ltv: 90, rate: 3.5, loanYears: 19,
+      repayMethod: 'equalPayment', grossRent: 202.8, vacancy: 10, opexRate: 15,
       rentDecline: 0.5, selfFundCap: 1000, ccrThreshold: 20, stressVacancy: 15,
       stressRateDelta: 2.0, stressCfThreshold: 0,
       holdYears: 10, exitMethod: 'capRate', exitCapRate: 8, apprRate: -1, sellCostRate: 5
