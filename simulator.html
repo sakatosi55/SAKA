@@ -331,8 +331,8 @@
         <div class="field-input"><input type="number" id="price" value="2380" step="10"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label for="acqCostRate">諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
-        <div class="field-input"><input type="number" id="acqCostRate" value="7" step="0.5"><span class="unit">%</span></div>
+        <label for="acqCostRate">諸費用率<span class="hint">登記・税・保険等（売主物件のため仲介手数料なし）</span></label>
+        <div class="field-input"><input type="number" id="acqCostRate" value="3.5" step="0.5"><span class="unit">%</span></div>
       </div>
     </div>
 
@@ -567,7 +567,7 @@
 
   $('loadSample').addEventListener('click', () => {
     const sample = {
-      price: 2380, acqCostRate: 7, ltv: 90, rate: 3.5, loanYears: 19,
+      price: 2380, acqCostRate: 3.5, ltv: 90, rate: 3.5, loanYears: 19,
       repayMethod: 'equalPayment', grossRent: 202.8, vacancy: 10, opexRate: 15,
       rentDecline: 0.5, selfFundCap: 1000, ccrThreshold: 20, stressVacancy: 15,
       stressRateDelta: 2.0, stressCfThreshold: 0,
