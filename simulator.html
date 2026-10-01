@@ -731,6 +731,7 @@
     const grossYield = price > 0 ? (grossRent / price) * 100 : 0;
     const netYield = price > 0 ? (y1.noi / price) * 100 : 0;
     const ccr = selfFund > 0 ? (y1.cf / selfFund) * 100 : null;
+    const paybackYears = (selfFund > 0 && y1.cf > 0) ? selfFund / y1.cf : null;
     const dscr = y1.debtService > 0 ? y1.noi / y1.debtService : null;
 
     // ストレス下CF（初年度）: 空室率上昇 + 金利上乗せ
@@ -749,7 +750,10 @@
 
     renderVerdict(overallPass, passCount);
     renderCriteriaCard('cardSelfFund', 'iconSelfFund', 'valSelfFund', selfFundPass, fmtMan(selfFund));
-    renderCriteriaCard('cardCCR', 'iconCCR', 'valCCR', ccrPass, ccr !== null ? fmtPct(ccr) : 'N/A');
+    const ccrValueText = ccr !== null
+      ? fmtPct(ccr) + (paybackYears !== null ? `（${(Math.round(paybackYears * 10) / 10).toFixed(1)}年回収）` : '（回収不可）')
+      : 'N/A';
+    renderCriteriaCard('cardCCR', 'iconCCR', 'valCCR', ccrPass, ccrValueText);
     renderCriteriaCard('cardStress', 'iconStress', 'valStress', stressPass, fmtMan(stressCF));
 
     // 指値ライン: 賃料・LTV・諸費用率・金利・返済期間・運営費率を固定し、価格を動かして
@@ -781,7 +785,7 @@
     ].filter(c => c.price !== null && isFinite(c.price));
 
     renderCriteriaTable([
-      { label: 'CCR', value: ccr !== null ? fmtPct(ccr) : 'N/A', pass: ccrPass, priceLabel: ccrThresholdPrice !== null ? fmtMan(ccrThresholdPrice) : '基準内（上限なし）' },
+      { label: 'CCR', value: ccrValueText, pass: ccrPass, priceLabel: ccrThresholdPrice !== null ? fmtMan(ccrThresholdPrice) : '基準内（上限なし）' },
       { label: 'ストレス下CF', value: fmtMan(stressCF), pass: stressPass, priceLabel: stressThresholdPrice !== null ? fmtMan(stressThresholdPrice) : '基準内（上限なし）' },
       { label: '自己資金', value: fmtMan(selfFund), pass: selfFundPass, priceLabel: selfFundThresholdPrice !== null ? fmtMan(selfFundThresholdPrice) : '基準内（上限なし）' }
     ]);
