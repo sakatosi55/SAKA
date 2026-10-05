@@ -321,18 +321,18 @@
 <div class="layout">
   <!-- 入力パネル -->
   <div class="col-input">
-    <button class="sample-btn" id="loadSample">ブルーベイyorii7 の数値を再読み込み</button>
-    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">寄居駅7分 一棟売アパート／埼玉県大里郡寄居町寄居569-1</p>
+    <button class="sample-btn" id="loadSample">春岡3 一棟アパートの数値を再読み込み</button>
+    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">JR東大宮駅 徒歩17分／埼玉県さいたま市見沼区春岡3</p>
 
     <div class="panel">
       <h2>物件情報</h2>
       <div class="field">
         <label for="price">物件価格<span class="hint">土地・建物合計</span></label>
-        <div class="field-input"><input type="number" id="price" value="2380" step="10"><span class="unit">万円</span></div>
+        <div class="field-input"><input type="number" id="price" value="3650" step="10"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label for="acqCostRate">諸費用率<span class="hint">登記・税・保険等（売主物件のため仲介手数料なし）</span></label>
-        <div class="field-input"><input type="number" id="acqCostRate" value="3.5" step="0.5"><span class="unit">%</span></div>
+        <label for="acqCostRate">諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
+        <div class="field-input"><input type="number" id="acqCostRate" value="7" step="0.5"><span class="unit">%</span></div>
       </div>
     </div>
 
@@ -343,12 +343,12 @@
         <div class="field-input"><input type="number" id="ltv" value="90" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label for="rate">金利</label>
-        <div class="field-input"><input type="number" id="rate" value="3.5" step="0.05"><span class="unit">%</span></div>
+        <label for="rate">金利<span class="hint">木造・築古のため暫定値。実際の融資条件に差し替えてください</span></label>
+        <div class="field-input"><input type="number" id="rate" value="4.0" step="0.05"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label for="loanYears">返済期間</label>
-        <div class="field-input"><input type="number" id="loanYears" value="19" step="1"><span class="unit">年</span></div>
+        <label for="loanYears">返済期間<span class="hint">法定耐用年数(木造22年)を築年数が超過しているため短め設定</span></label>
+        <div class="field-input"><input type="number" id="loanYears" value="15" step="1"><span class="unit">年</span></div>
       </div>
       <div class="field">
         <label for="repayMethod">返済方式</label>
@@ -368,12 +368,12 @@
     <div class="panel">
       <h2>収益・費用</h2>
       <div class="field">
-        <label for="grossRent">満室想定年間家賃収入</label>
-        <div class="field-input"><input type="number" id="grossRent" value="202.8" step="5"><span class="unit">万円</span></div>
+        <label for="grossRent">想定年間家賃収入<span class="hint">現況賃料（6戸中5戸稼働、満室ではない）</span></label>
+        <div class="field-input"><input type="number" id="grossRent" value="329.04" step="5"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label for="vacancy">空室率</label>
-        <div class="field-input"><input type="number" id="vacancy" value="10" step="0.5"><span class="unit">%</span></div>
+        <label for="vacancy">空室率<span class="hint">現況賃料に空室分が反映済みのため0%</span></label>
+        <div class="field-input"><input type="number" id="vacancy" value="0" step="0.5"><span class="unit">%</span></div>
       </div>
       <div class="field">
         <label for="opexRate">運営費率<span class="hint">管理費・修繕積立・保険・固都税等／実効収入に対する割合</span></label>
@@ -567,8 +567,8 @@
 
   $('loadSample').addEventListener('click', () => {
     const sample = {
-      price: 2380, acqCostRate: 3.5, ltv: 90, rate: 3.5, loanYears: 19,
-      repayMethod: 'equalPayment', grossRent: 202.8, vacancy: 10, opexRate: 15,
+      price: 3650, acqCostRate: 7, ltv: 90, rate: 4.0, loanYears: 15,
+      repayMethod: 'equalPayment', grossRent: 329.04, vacancy: 0, opexRate: 15,
       rentDecline: 0.5, selfFundCap: 1000, ccrThreshold: 20, stressVacancy: 15,
       stressRateDelta: 2.0, stressCfThreshold: 0,
       holdYears: 10, exitMethod: 'capRate', exitCapRate: 8, apprRate: -1, sellCostRate: 5
