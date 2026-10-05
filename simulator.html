@@ -515,6 +515,7 @@
         <div class="kpi"><div class="kpi-label">表面利回り</div><div class="kpi-value accent" id="kpiGrossYield">-</div></div>
         <div class="kpi"><div class="kpi-label">実質利回り（初年度）</div><div class="kpi-value accent" id="kpiNetYield">-</div></div>
         <div class="kpi"><div class="kpi-label">年間返済額（初年度）</div><div class="kpi-value" id="kpiDebtService">-</div></div>
+        <div class="kpi"><div class="kpi-label">返済比率（返済額÷家賃収入）</div><div class="kpi-value" id="kpiDSR">-</div></div>
         <div class="kpi"><div class="kpi-label">初年度キャッシュフロー</div><div class="kpi-value" id="kpiCF1">-</div></div>
         <div class="kpi"><div class="kpi-label">DSCR（返済余裕率）</div><div class="kpi-value" id="kpiDSCR">-</div></div>
         <div class="kpi"><div class="kpi-label">保有期間中 累計CF</div><div class="kpi-value" id="kpiCumCF">-</div></div>
@@ -870,6 +871,8 @@
     $('kpiGrossYield').textContent = fmtPct(grossYield);
     $('kpiNetYield').textContent = fmtPct(netYield);
     $('kpiDebtService').textContent = fmtMan(y1.debtService);
+    const dsr = grossRent > 0 ? (y1.debtService / grossRent) * 100 : null;
+    $('kpiDSR').textContent = dsr !== null ? fmtPct(dsr) : 'N/A';
     $('kpiCF1').textContent = fmtMan(y1.cf);
     $('kpiCF1').className = 'kpi-value ' + (y1.cf >= 0 ? 'good' : 'bad');
     $('kpiDSCR').textContent = dscr !== null ? (Math.round(dscr * 100) / 100).toFixed(2) : 'N/A';
