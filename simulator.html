@@ -321,8 +321,8 @@
 <div class="layout">
   <!-- 入力パネル -->
   <div class="col-input">
-    <button class="sample-btn" id="loadSample">春岡3 一棟アパートの数値を再読み込み</button>
-    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">JR東大宮駅 徒歩17分／埼玉県さいたま市見沼区春岡3</p>
+    <button class="sample-btn" id="loadSample">エステートガーデン東大宮 の数値を再読み込み</button>
+    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">JR東大宮駅 徒歩17分／埼玉県さいたま市見沼区春岡3／滋賀銀行フルローン提案</p>
 
     <div class="panel">
       <h2>物件情報</h2>
@@ -331,24 +331,24 @@
         <div class="field-input"><input type="number" id="price" value="3650" step="10"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label for="acqCostRate">諸費用率<span class="hint">仲介手数料・登記・税など</span></label>
-        <div class="field-input"><input type="number" id="acqCostRate" value="7" step="0.5"><span class="unit">%</span></div>
+        <label for="acqCostRate">諸費用率<span class="hint">登記・仲介手数料・税など（実額2,212,500円から算出）</span></label>
+        <div class="field-input"><input type="number" id="acqCostRate" value="6.06" step="0.5"><span class="unit">%</span></div>
       </div>
     </div>
 
     <div class="panel">
-      <h2>融資条件</h2>
+      <h2>融資条件<span class="h2-note">ローンA（有担保・主たる借入）</span></h2>
       <div class="field">
         <label for="ltv">LTV（借入 ÷ 価格）</label>
-        <div class="field-input"><input type="number" id="ltv" value="90" step="1"><span class="unit">%</span></div>
+        <div class="field-input"><input type="number" id="ltv" value="84.38" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label for="rate">金利<span class="hint">木造・築古のため暫定値。実際の融資条件に差し替えてください</span></label>
-        <div class="field-input"><input type="number" id="rate" value="4.0" step="0.05"><span class="unit">%</span></div>
+        <label for="rate">金利</label>
+        <div class="field-input"><input type="number" id="rate" value="4.275" step="0.05"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label for="loanYears">返済期間<span class="hint">法定耐用年数(木造22年)を築年数が超過しているため短め設定</span></label>
-        <div class="field-input"><input type="number" id="loanYears" value="15" step="1"><span class="unit">年</span></div>
+        <label for="loanYears">返済期間</label>
+        <div class="field-input"><input type="number" id="loanYears" value="35" step="1"><span class="unit">年</span></div>
       </div>
       <div class="field">
         <label for="repayMethod">返済方式</label>
@@ -359,8 +359,28 @@
           </select>
         </div>
       </div>
+
+      <div class="field" style="margin-top:6px;">
+        <label for="useLoanB">第2ローンを利用する<span class="hint">無担保枠など、価格に連動しない固定額の追加融資</span></label>
+        <div class="field-input"><input type="checkbox" id="useLoanB" checked style="width:18px;height:18px;"></div>
+      </div>
+      <div id="loanBFields" style="display:block;">
+        <div class="field">
+          <label for="loanBAmount">借入金額B</label>
+          <div class="field-input"><input type="number" id="loanBAmount" value="570" step="10"><span class="unit">万円</span></div>
+        </div>
+        <div class="field">
+          <label for="rateB">金利B</label>
+          <div class="field-input"><input type="number" id="rateB" value="3.25" step="0.05"><span class="unit">%</span></div>
+        </div>
+        <div class="field">
+          <label for="loanYearsB">返済期間B</label>
+          <div class="field-input"><input type="number" id="loanYearsB" value="20" step="1"><span class="unit">年</span></div>
+        </div>
+      </div>
+
       <div class="computed-row">
-        <div class="computed"><div class="c-label">借入額</div><div class="c-value" id="cLoan">-</div></div>
+        <div class="computed"><div class="c-label">借入額（合計）</div><div class="c-value" id="cLoan">-</div></div>
         <div class="computed"><div class="c-label">自己資金</div><div class="c-value" id="cSelfFund">-</div></div>
       </div>
     </div>
@@ -376,8 +396,8 @@
         <div class="field-input"><input type="number" id="vacancy" value="0" step="0.5"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label for="opexRate">運営費率<span class="hint">管理費・修繕積立・保険・固都税等／実効収入に対する割合</span></label>
-        <div class="field-input"><input type="number" id="opexRate" value="15" step="1"><span class="unit">%</span></div>
+        <label for="opexRate">運営費率<span class="hint">管理費・清掃・固都税等込み（実額299,637円から算出）</span></label>
+        <div class="field-input"><input type="number" id="opexRate" value="9.11" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
         <label for="rentDecline">年間家賃下落率<span class="hint">築年経過による下落想定</span></label>
@@ -550,6 +570,7 @@
   const fmtPct = (v) => (Math.round(v * 100) / 100).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '%';
 
   const inputs = ['price','acqCostRate','ltv','rate','loanYears','repayMethod',
+    'useLoanB','loanBAmount','rateB','loanYearsB',
     'grossRent','vacancy','opexRate','rentDecline',
     'selfFundCap','ccrThreshold','stressVacancy','stressRateDelta','stressCfThreshold',
     'holdYears','exitMethod','exitCapRate','apprRate','sellCostRate'];
@@ -565,15 +586,23 @@
     $('exitApprField').style.display = isCap ? 'none' : 'flex';
   });
 
+  $('useLoanB').addEventListener('change', () => {
+    $('loanBFields').style.display = $('useLoanB').checked ? 'block' : 'none';
+  });
+
   $('loadSample').addEventListener('click', () => {
     const sample = {
-      price: 3650, acqCostRate: 7, ltv: 90, rate: 4.0, loanYears: 15,
-      repayMethod: 'equalPayment', grossRent: 329.04, vacancy: 0, opexRate: 15,
+      price: 3650, acqCostRate: 6.06, ltv: 84.38, rate: 4.275, loanYears: 35,
+      repayMethod: 'equalPayment',
+      loanBAmount: 570, rateB: 3.25, loanYearsB: 20,
+      grossRent: 329.04, vacancy: 0, opexRate: 9.11,
       rentDecline: 0.5, selfFundCap: 1000, ccrThreshold: 20, stressVacancy: 15,
       stressRateDelta: 2.0, stressCfThreshold: 0,
       holdYears: 10, exitMethod: 'capRate', exitCapRate: 8, apprRate: -1, sellCostRate: 5
     };
     Object.entries(sample).forEach(([k, v]) => { $(k).value = v; });
+    $('useLoanB').checked = true;
+    $('loanBFields').style.display = 'block';
     $('exitCapField').style.display = 'flex';
     $('exitApprField').style.display = 'none';
     recalc();
@@ -629,6 +658,31 @@
     return sched.reduce((s, m) => s + m.payment, 0);
   }
 
+  // Loan A (price-linked) + optional Loan B (fixed amount, e.g. an unsecured
+  // facility that doesn't scale with price) are amortized independently and
+  // summed month-by-month into a single combined schedule.
+  function combinedSchedule(loanA, rateA, yearsA, loanB, rateB, yearsB, useB, months, method) {
+    const schedA = buildAmortSchedule(loanA, rateA, yearsA, months, method);
+    const schedB = useB ? buildAmortSchedule(loanB, rateB, yearsB, months, method) : [];
+    const combined = [];
+    for (let i = 0; i < months; i++) {
+      const a = schedA[i] || { interest: 0, principal: 0, payment: 0, balance: 0 };
+      const b = schedB[i] || { interest: 0, principal: 0, payment: 0, balance: 0 };
+      combined.push({
+        interest: a.interest + b.interest,
+        principal: a.principal + b.principal,
+        payment: a.payment + b.payment,
+        balance: a.balance + b.balance
+      });
+    }
+    return combined;
+  }
+
+  function combinedAnnualDebtServiceYear1(loanA, rateA, yearsA, loanB, rateB, yearsB, useB, method) {
+    const sched = combinedSchedule(loanA, rateA, yearsA, loanB, rateB, yearsB, useB, 12, method);
+    return sched.reduce((s, m) => s + m.payment, 0);
+  }
+
   function irr(cashflows) {
     const npv = (r) => cashflows.reduce((sum, cf, t) => sum + cf / Math.pow(1 + r, t), 0);
     let lo = -0.99, hi = 10;
@@ -668,6 +722,10 @@
     const rate = parseFloat($('rate').value) || 0;
     const loanYears = Math.max(1, parseInt($('loanYears').value) || 1);
     const repayMethod = $('repayMethod').value;
+    const useLoanB = $('useLoanB').checked;
+    const loanBAmount = useLoanB ? (parseFloat($('loanBAmount').value) || 0) : 0;
+    const rateB = parseFloat($('rateB').value) || 0;
+    const loanYearsB = Math.max(1, parseInt($('loanYearsB').value) || 1);
     const grossRent = parseFloat($('grossRent').value) || 0;
     const vacancy = parseFloat($('vacancy').value) || 0;
     const opexRate = parseFloat($('opexRate').value) || 0;
@@ -691,7 +749,8 @@
 
     const acqCost = price * acqCostRate / 100;
     const totalInvestment = price + acqCost;
-    const loan = Math.max(0, price * ltv / 100);
+    const loanA = Math.max(0, price * ltv / 100);
+    const loan = loanA + loanBAmount; // may include a fixed-amount second loan
     const selfFund = totalInvestment - loan; // may be negative (over-loan)
 
     $('cLoan').textContent = fmtMan(loan);
@@ -707,7 +766,7 @@
     }
 
     const scheduleMonths = holdYears * 12;
-    const monthlySchedule = buildAmortSchedule(loan, rate, loanYears, scheduleMonths, repayMethod);
+    const monthlySchedule = combinedSchedule(loanA, rate, loanYears, loanBAmount, rateB, loanYearsB, useLoanB, scheduleMonths, repayMethod);
     const yearlyLoan = aggregateYearly(monthlySchedule, holdYears);
 
     const years = [];
@@ -738,7 +797,7 @@
     const stressEffectiveIncome = grossRent * (1 - stressVacancy / 100);
     const stressOpex = stressEffectiveIncome * opexRate / 100;
     const stressNOI = stressEffectiveIncome - stressOpex;
-    const stressDebtService = annualDebtServiceYear1(loan, rate + stressRateDelta, loanYears, repayMethod);
+    const stressDebtService = combinedAnnualDebtServiceYear1(loanA, rate + stressRateDelta, loanYears, loanBAmount, rateB + stressRateDelta, loanYearsB, useLoanB, repayMethod);
     const stressCF = stressNOI - stressDebtService;
 
     // 総合判定
@@ -756,22 +815,23 @@
     renderCriteriaCard('cardCCR', 'iconCCR', 'valCCR', ccrPass, ccrValueText);
     renderCriteriaCard('cardStress', 'iconStress', 'valStress', stressPass, fmtMan(stressCF));
 
-    // 指値ライン: 賃料・LTV・諸費用率・金利・返済期間・運営費率を固定し、価格を動かして
-    // 各基準がちょうど効く価格を二分探索で求める（各指標は価格に対して単調減少）。
-    const k = 1 + acqCostRate / 100 - ltv / 100; // selfFund(P) = P * k
-    const selfFundThresholdPrice = k > 0 ? selfFundCap / k : null;
+    // 指値ライン: 賃料・LTV・諸費用率・金利・返済期間・運営費率（+固定額の第2ローン）を
+    // 固定し、価格を動かして各基準がちょうど効く価格を二分探索で求める
+    // （各指標は価格に対して単調減少）。第2ローンは価格に連動しない固定額として扱う。
+    const k = 1 + acqCostRate / 100 - ltv / 100; // selfFund(P) = P * k - loanBAmount
+    const selfFundThresholdPrice = k > 0 ? (selfFundCap + loanBAmount) / k : null;
 
     const ccrMetric = (P) => {
       const L = P * ltv / 100;
-      const sf = P * k;
+      const sf = P * k - loanBAmount;
       if (sf <= 0) return Infinity;
-      const ds = annualDebtServiceYear1(L, rate, loanYears, repayMethod);
+      const ds = combinedAnnualDebtServiceYear1(L, rate, loanYears, loanBAmount, rateB, loanYearsB, useLoanB, repayMethod);
       const cf = y1.noi - ds;
       return (cf / sf) * 100;
     };
     const stressMetric = (P) => {
       const L = P * ltv / 100;
-      const ds = annualDebtServiceYear1(L, rate + stressRateDelta, loanYears, repayMethod);
+      const ds = combinedAnnualDebtServiceYear1(L, rate + stressRateDelta, loanYears, loanBAmount, rateB + stressRateDelta, loanYearsB, useLoanB, repayMethod);
       return stressNOI - ds;
     };
     const searchHi = Math.max(price, 1) * 20 + 1000;
