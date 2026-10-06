@@ -321,34 +321,34 @@
 <div class="layout">
   <!-- 入力パネル -->
   <div class="col-input">
-    <button class="sample-btn" id="loadSample">エステートガーデン東大宮 の数値を再読み込み</button>
-    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">JR東大宮駅 徒歩17分／埼玉県さいたま市見沼区春岡3／滋賀銀行フルローン提案</p>
+    <button class="sample-btn" id="loadSample">エステートガーデン南与野 の数値を再読み込み</button>
+    <p style="font-size:0.72rem;color:var(--muted);margin:-10px 0 16px;text-align:center;">JR南与野駅 バス19分 下大久保停歩2分／埼玉県さいたま市桜区大字下大久保／融資条件は未確定の仮置き値</p>
 
     <div class="panel">
       <h2>物件情報</h2>
       <div class="field">
         <label for="price">物件価格<span class="hint">土地・建物合計</span></label>
-        <div class="field-input"><input type="number" id="price" value="3650" step="10"><span class="unit">万円</span></div>
+        <div class="field-input"><input type="number" id="price" value="4110" step="10"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label for="acqCostRate">諸費用率<span class="hint">登記・仲介手数料・税など（正規仲介ありの実額2,212,500円から算出）</span></label>
-        <div class="field-input"><input type="number" id="acqCostRate" value="6.06" step="0.5"><span class="unit">%</span></div>
+        <label for="acqCostRate">諸費用率<span class="hint">仲介手数料不要物件のため登記・税等のみの概算（要確認）</span></label>
+        <div class="field-input"><input type="number" id="acqCostRate" value="2.5" step="0.5"><span class="unit">%</span></div>
       </div>
     </div>
 
     <div class="panel">
-      <h2>融資条件<span class="h2-note">ローンA（有担保・主たる借入）</span></h2>
+      <h2>融資条件<span class="h2-note">未確定のため仮置き値（要修正）</span></h2>
       <div class="field">
         <label for="ltv">LTV（借入 ÷ 価格）</label>
-        <div class="field-input"><input type="number" id="ltv" value="84.38" step="1"><span class="unit">%</span></div>
+        <div class="field-input"><input type="number" id="ltv" value="90" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
         <label for="rate">金利</label>
-        <div class="field-input"><input type="number" id="rate" value="4.275" step="0.05"><span class="unit">%</span></div>
+        <div class="field-input"><input type="number" id="rate" value="3.5" step="0.05"><span class="unit">%</span></div>
       </div>
       <div class="field">
         <label for="loanYears">返済期間</label>
-        <div class="field-input"><input type="number" id="loanYears" value="35" step="1"><span class="unit">年</span></div>
+        <div class="field-input"><input type="number" id="loanYears" value="25" step="1"><span class="unit">年</span></div>
       </div>
       <div class="field">
         <label for="repayMethod">返済方式</label>
@@ -362,9 +362,9 @@
 
       <div class="field" style="margin-top:6px;">
         <label for="useLoanB">第2ローンを利用する<span class="hint">無担保枠など、価格に連動しない固定額の追加融資</span></label>
-        <div class="field-input"><input type="checkbox" id="useLoanB" checked style="width:18px;height:18px;"></div>
+        <div class="field-input"><input type="checkbox" id="useLoanB" style="width:18px;height:18px;"></div>
       </div>
-      <div id="loanBFields" style="display:block;">
+      <div id="loanBFields" style="display:none;">
         <div class="field">
           <label for="loanBAmount">借入金額B</label>
           <div class="field-input"><input type="number" id="loanBAmount" value="570" step="10"><span class="unit">万円</span></div>
@@ -388,15 +388,15 @@
     <div class="panel">
       <h2>収益・費用</h2>
       <div class="field">
-        <label for="grossRent">想定年間家賃収入<span class="hint">現況賃料（6戸中5戸稼働、満室ではない）</span></label>
-        <div class="field-input"><input type="number" id="grossRent" value="329.04" step="5"><span class="unit">万円</span></div>
+        <label for="grossRent">想定年間家賃収入<span class="hint">年間予定収入（満室稼働中）</span></label>
+        <div class="field-input"><input type="number" id="grossRent" value="328.8" step="5"><span class="unit">万円</span></div>
       </div>
       <div class="field">
-        <label for="vacancy">空室率<span class="hint">現況賃料に空室分が反映済みのため0%</span></label>
+        <label for="vacancy">空室率<span class="hint">現在満室のため0%（将来の入替リスクは別途考慮）</span></label>
         <div class="field-input"><input type="number" id="vacancy" value="0" step="0.5"><span class="unit">%</span></div>
       </div>
       <div class="field">
-        <label for="opexRate">運営費率<span class="hint">管理費・清掃・固都税等込み（実額299,637円から算出）</span></label>
+        <label for="opexRate">運営費率<span class="hint">内訳不明のため姉妹物件(東大宮)の比率を仮採用（要確認）</span></label>
         <div class="field-input"><input type="number" id="opexRate" value="9.11" step="1"><span class="unit">%</span></div>
       </div>
       <div class="field">
@@ -593,17 +593,17 @@
 
   $('loadSample').addEventListener('click', () => {
     const sample = {
-      price: 3650, acqCostRate: 6.06, ltv: 84.38, rate: 4.275, loanYears: 35,
+      price: 4110, acqCostRate: 2.5, ltv: 90, rate: 3.5, loanYears: 25,
       repayMethod: 'equalPayment',
       loanBAmount: 570, rateB: 3.25, loanYearsB: 20,
-      grossRent: 329.04, vacancy: 0, opexRate: 9.11,
+      grossRent: 328.8, vacancy: 0, opexRate: 9.11,
       rentDecline: 0.5, selfFundCap: 1000, ccrThreshold: 20, stressVacancy: 15,
       stressRateDelta: 2.0, stressCfThreshold: 0,
       holdYears: 10, exitMethod: 'capRate', exitCapRate: 8, apprRate: -1, sellCostRate: 5
     };
     Object.entries(sample).forEach(([k, v]) => { $(k).value = v; });
-    $('useLoanB').checked = true;
-    $('loanBFields').style.display = 'block';
+    $('useLoanB').checked = false;
+    $('loanBFields').style.display = 'none';
     $('exitCapField').style.display = 'flex';
     $('exitApprField').style.display = 'none';
     recalc();
