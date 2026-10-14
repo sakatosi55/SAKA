@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>購入打診チェック</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #eef1f7;
+    --panel: #ffffff;
+    --panel-border: #dde2ec;
+    --text: #1c2333;
+    --muted: #707891;
+    --accent: #2f5fd1;
+    --accent-dim: #dde6fb;
+    --good: #1a9f6c;
+    --good-bg: #e6f7ef;
+    --bad: #d64545;
+    --field-bg: #f7f8fb;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', sans-serif;
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+  }
+  .wrap { max-width: 460px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 24px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 2px rgba(20,30,60,0.04);
+  }
+  .panel h2 {
+    font-size: 0.82rem;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+    margin-bottom: 12px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .row:last-child { margin-bottom: 0; }
+  .row label {
+    font-size: 0.82rem;
+    color: var(--text);
+    flex: 1;
+  }
+  .row .hint {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .field-input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  input[type="number"] {
+    width: 96px;
+    background: var(--field-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 7px 8px;
+    font-size: 0.88rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="number"]:focus { outline: none; border-color: var(--accent); }
+  .unit { font-size: 0.72rem; color: var(--muted); width: 48px; }
+
+  .row.computed label { color: var(--muted); }
+  .row.computed .value {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .subtotal-box {
+    background: var(--field-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 10px 0 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .subtotal-box .label { font-size: 0.8rem; color: var(--muted); }
+  .subtotal-box .value { font-size: 1.1rem; font-weight: bold; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  .cf-box {
+    background: var(--good-bg);
+    border: 1px solid var(--good);
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .cf-box.negative { background: #fdecec; border-color: var(--bad); }
+  .cf-box .cf-label { font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+  .cf-box .cf-value { font-size: 2rem; font-weight: bold; color: var(--good); font-variant-numeric: tabular-nums; }
+  .cf-box.negative .cf-value { color: var(--bad); }
+  .cf-box .cf-sub { font-size: 0.74rem; color: var(--muted); margin-top: 6px; }
+
+  .ref-row {
+    display: flex;
+    gap: 10px;
+  }
+  .ref-tile {
+    flex: 1;
+    background: var(--field-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .ref-tile .r-label { font-size: 0.66rem; color: var(--muted); margin-bottom: 3px; }
+  .ref-tile .r-value { font-size: 1rem; font-weight: bold; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  .footer-note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.68rem;
+    line-height: 1.7;
+    margin-top: 18px;
+  }
+
+  @media (max-width: 400px) {
+    input[type="number"] { width: 84px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>購入打診チェック</h1>
+  <p class="subtitle">物件情報を見た瞬間に、打診すべきかをその場で判断する簡易ツール</p>
+
+  <div class="panel">
+    <h2>物件・賃料・返済</h2>
+    <div class="row">
+      <label for="price">購入金額</label>
+      <div class="field-input"><input type="number" id="price" value="2000" step="10"><span class="unit">万円</span></div>
+    </div>
+    <div class="row">
+      <label for="rent">賃料（月額）</label>
+      <div class="field-input"><input type="number" id="rent" value="8.0" step="0.1"><span class="unit">万円</span></div>
+    </div>
+    <div class="row">
+      <label for="repayment">返済額（月額）</label>
+      <div class="field-input"><input type="number" id="repayment" value="6.0" step="0.1"><span class="unit">万円</span></div>
+    </div>
+  </div>
+
+  <div class="subtotal-box">
+    <div class="label">手残り（賃料－返済額）</div>
+    <div class="value" id="afterLoan">-</div>
+  </div>
+
+  <div class="panel">
+    <h2>諸費用（月額）</h2>
+    <div class="row">
+      <label for="tax">税金<span class="hint">固定資産税など。都度入力（年額なら12で割った額）</span></label>
+      <div class="field-input"><input type="number" id="tax" value="0.8" step="0.1"><span class="unit">万円</span></div>
+    </div>
+    <div class="row computed">
+      <label>管理費<span class="hint">賃料に対する率</span></label>
+      <div class="field-input">
+        <input type="number" id="mgmtRate" value="5.5" step="0.5" style="width:60px;">
+        <span class="unit">%</span>
+      </div>
+    </div>
+    <div class="row">
+      <label for="internet">インターネット使用料</label>
+      <div class="field-input"><input type="number" id="internet" value="1.1" step="0.1"><span class="unit">万円</span></div>
+    </div>
+    <div class="row">
+      <label for="utility">水道光熱費（共用）</label>
+      <div class="field-input"><input type="number" id="utility" value="0.3" step="0.1"><span class="unit">万円</span></div>
+    </div>
+    <div class="row">
+      <label for="cleaning">クリーニング</label>
+      <div class="field-input"><input type="number" id="cleaning" value="0.3" step="0.1"><span class="unit">万円</span></div>
+    </div>
+  </div>
+
+  <div class="subtotal-box">
+    <div class="label">諸費用 合計（管理費 <span id="mgmtYen">-</span> 含む）</div>
+    <div class="value" id="costTotal">-</div>
+  </div>
+
+  <div class="cf-box" id="cfBox">
+    <div class="cf-label">残りがCF（月額）</div>
+    <div class="cf-value" id="cfValue">-</div>
+    <div class="cf-sub" id="cfSub">-</div>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref-tile"><div class="r-label">表面利回り</div><div class="r-value" id="refYield">-</div></div>
+    <div class="ref-tile"><div class="r-label">年間CF</div><div class="r-value" id="refAnnualCf">-</div></div>
+  </div>
+
+  <p class="footer-note">
+    あくまで打診前の即時チェック用です。実際の融資条件・税務影響は<br>
+    渋沢栄一（融資）・昌平君（経理）にご相談ください。
+  </p>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const fmt = (v) => (Math.round(v * 100) / 100).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '万円';
+  const fmtYen = (v) => Math.round(v * 10000).toLocaleString('ja-JP') + '円';
+  const fmtPct = (v) => (Math.round(v * 100) / 100).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '%';
+
+  const inputs = ['price','rent','repayment','tax','mgmtRate','internet','utility','cleaning'];
+  inputs.forEach(id => {
+    $(id).addEventListener('input', recalc);
+    $(id).addEventListener('change', recalc);
+  });
+
+  function recalc() {
+    const price = parseFloat($('price').value) || 0;
+    const rent = parseFloat($('rent').value) || 0;
+    const repayment = parseFloat($('repayment').value) || 0;
+    const tax = parseFloat($('tax').value) || 0;
+    const mgmtRate = parseFloat($('mgmtRate').value) || 0;
+    const internet = parseFloat($('internet').value) || 0;
+    const utility = parseFloat($('utility').value) || 0;
+    const cleaning = parseFloat($('cleaning').value) || 0;
+
+    const afterLoan = rent - repayment;
+    $('afterLoan').textContent = fmt(afterLoan);
+    $('afterLoan').style.color = afterLoan >= 0 ? 'var(--text)' : 'var(--bad)';
+
+    const mgmtFee = rent * mgmtRate / 100;
+    $('mgmtYen').textContent = fmt(mgmtFee);
+
+    const costTotal = tax + mgmtFee + internet + utility + cleaning;
+    $('costTotal').textContent = fmt(costTotal);
+
+    const cf = afterLoan - costTotal;
+    const cfBox = $('cfBox');
+    cfBox.className = 'cf-box' + (cf < 0 ? ' negative' : '');
+    $('cfValue').textContent = fmt(cf);
+    $('cfSub').textContent = `賃料${fmt(rent)} − 返済${fmt(repayment)} − 税金${fmt(tax)} − 管理費${fmt(mgmtFee)} − ネット${fmt(internet)} − 水光熱${fmt(utility)} − 清掃${fmt(cleaning)}`;
+
+    const grossYield = price > 0 ? (rent * 12 / price) * 100 : 0;
+    $('refYield').textContent = fmtPct(grossYield);
+    $('refAnnualCf').textContent = fmt(cf * 12);
+  }
+
+  recalc();
+})();
+</script>
+</body>
+</html>
